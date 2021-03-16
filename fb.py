@@ -8,7 +8,7 @@ app.config['SECRET_KEY']='5791628bb0b13ce0c676dfde280ba245'
 try:
     conn = psycopg2.connect(
         host="localhost",
-        database="dashboard",
+        database="facebook",
         user="postgres",
         password="Qwerty@123")
 
