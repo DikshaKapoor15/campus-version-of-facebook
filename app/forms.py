@@ -13,23 +13,31 @@ def invalid_credentials(form,field):
     elif password_entered!=user_object.password:
         raise ValidationError("Username or password is incorrect")
 
+def invalid_mail(form,field):
+    mail_id_entered = form.mail_id.data
+    user_object = Credentials.query.filter_by(mail_id=mail_id_entered).first()
+    if user_object:
+        raise ValidationError("Email already exists.")
+
+
+def invalid_password(form,field):
+    password_entered = field.data
+    password_re_entered = form.confirm_password.data
+    if password_entered != password_re_entered:
+        raise ValidationError("Passwords entered don't match")
 
 class LoginForm(FlaskForm):
     mail_id = StringField('mail_id', validators=[InputRequired(message = "Username required")])
     password = PasswordField('Password', validators=[InputRequired(message = "Password required"),invalid_credentials])
-    submit_button = SubmitField('Login')
+
 
 class RegistrationForm(FlaskForm):
-    mail_id = StringField('mail_id')
-    password = PasswordField('password')
+    mail_id = StringField('mail_id',validators=[InputRequired(message = "Mail already exists"), invalid_mail])
+    password = PasswordField('password',validators=[InputRequired(message = "Password mismatch"),invalid_password])
     confirm_password = PasswordField('confirm_password')
     full_name = StringField('full_name')
     year = IntegerField('year')
     department = StringField('department')
     degree = StringField('degree')
-    submit_button = SubmitField('Register')
 
-    def validate_mailid(self,mail_id):
-        user_object = Credentials.query.filter_by(mail_id = mail_id).first()
-        if user_object:
-            raise ValidationError("Mailid already exists.")
+

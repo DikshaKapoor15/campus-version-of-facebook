@@ -97,7 +97,7 @@ a{
     border: 1px solid #b5b5b5;
     outline: none;
 }
-.login-show input[type="button"] {
+.login-show input[type="submit"] {
     max-width: 150px;
     width: 100%;
     background: #444444;
@@ -114,15 +114,15 @@ a{
     padding:10px 0;
 }
 
-.register-show input[type="text"], .register-show input[type="password"]{
+.register-show input[type="text"], .register-show input[type="password"], .register-show input[type="number"]{
     width: 100%;
     display: block;
-    margin:20px 0;
+    margin:10px 0;
     padding: 15px;
     border: 1px solid #b5b5b5;
     outline: none;
 }
-.register-show input[type="button"] {
+.register-show input[type="submit"] {
     max-width: 150px;
     width: 100%;
     background: #444444;
