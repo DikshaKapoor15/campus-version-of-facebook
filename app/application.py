@@ -27,6 +27,8 @@ def load_user(id):
 
 
 @app.route('/', methods=['GET', 'POST'])
+def temp():
+    return render_template("index.html")
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     login_form = LoginForm()
