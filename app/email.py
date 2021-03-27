@@ -6,6 +6,7 @@ from app.models import *
 
 # ...
 mail=Mail(app)
+
 def send_email(subject, sender, recipients, text_body, html_body):
     msg = Message(subject, sender=sender, recipients=recipients)
     msg.body = text_body
@@ -18,7 +19,9 @@ def send_password_reset_email(user):
     print("in email.py --- reset password'''")
     token = user.get_reset_password_token()
     send_email(' Reset Your Password',
-               sender="kanikakapoor11995@gmail.com",
+
+               sender="developmentsoftware305@gmail.com",
+
                recipients=[user.mail_id],
                text_body=render_template('email/reset_password.txt',
                                          user=user, token=token),

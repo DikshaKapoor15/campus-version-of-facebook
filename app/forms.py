@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, DateField
-from wtforms.validators import InputRequired, ValidationError, DataRequired, EqualTo
+from wtforms.validators import InputRequired, ValidationError,DataRequired, EqualTo
+
 from app.models import *
 import datetime
 
@@ -53,4 +54,27 @@ class RegistrationForm(FlaskForm):
     department = StringField('department')
     degree = StringField('degree')
 
+class PostForm(FlaskForm):
+    mail_id = StringField('mail_id')
+    post_date = DateField(format='%Y-%m-%d')
+    post_description = StringField('post_description')
+    tag1 = StringField('tag1')
+    tag2 = StringField('tag2')
+    tag3 = StringField('tag3')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.post_date.data:
+            self.post_date.data = datetime.date.today()
+
+
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    submit = SubmitField('Request Password Reset')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Request Password Reset')
 
