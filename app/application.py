@@ -113,7 +113,7 @@ def create_post():
         db.session.add(newpost)
         db.session.commit()
         return "submited successfully"
-    return render_template('create_post.html',form = post_form)
+    return render_template('post.html',form = post_form)
 
 @app.route("/logout", methods=['GET'])
 def logout():
