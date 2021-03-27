@@ -47,7 +47,7 @@
                 {% endfor %}
             </ul>
 				<input type="submit" name = "action" value="Login">
-				<a href="">Forgot password?</a>
+				<a href="{{url_for('reset_password_request')}}">Forgot password?</a>
 			</div>
 		</form>
 			<form method="POST" action="{{url_for('login')}}">
