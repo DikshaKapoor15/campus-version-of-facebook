@@ -4,6 +4,9 @@ from app.models import *
 from flask import render_template, url_for, redirect,request, jsonify
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from sqlalchemy import create_engine
+from werkzeug.utils import secure_filename
+
+
 
 engine = create_engine('postgres://odebgxxluzxqto:02911cc1fe5c97f0916d6a05760b41704668ab6013b712674a3b677f127ac1db@ec2-54-205-183-19.compute-1.amazonaws.com:5432/db0511lmef59sk')
 connection = engine.raw_connection()
@@ -27,8 +30,6 @@ def load_user(id):
 
 
 @app.route('/', methods=['GET', 'POST'])
-def wel()
-    
 @app.route('/login', methods = ['GET','POST'])
 def login():
     login_form = LoginForm()
@@ -53,6 +54,24 @@ def login():
                 db.session.commit()
                 return redirect(url_for('login'))
     return render_template("login.html", form1 = login_form, form = reg_form)
+
+@app.route('/post', methods=["POST","GET"] )
+def post():
+    pform = PostForm()
+    if request.method == "POST":
+        if pform.validate_on_submit():
+            f = request.files['post_img']
+
+            newPost = Postss(d=pform.date.data , pd = pform.post_description.data ,
+                            t1=pform.tag1.data,t2=pform.tag2.data,t3=pform.tag3.data,mid=current_user.mail_id
+                            ,pi=f.read())
+            db.session.add(newPost)
+            db.session.commit()
+            return "uploaded successfully"
+    return render_template('post.html',form=pform)
+
+
+
 
 
 

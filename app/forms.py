@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, DateField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, DateField  ,SelectField
 from wtforms.validators import InputRequired, ValidationError
+from flask_wtf.file import FileField, FileRequired
 from app.models import *
 import datetime
 
@@ -39,5 +40,22 @@ class RegistrationForm(FlaskForm):
     year = IntegerField('year')
     department = StringField('department')
     degree = StringField('degree')
+
+
+
+class PostForm(FlaskForm):
+    post_description = StringField('caption')
+    post_img = FileField("upload")
+    tag1 = StringField("tag1",validators=[InputRequired()])
+    tag2 = StringField("tag2")
+    tag3 = StringField("tag3")
+    date = DateField("date")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.date.data:
+            self.date.data = datetime.date.today()
+
+
 
 
