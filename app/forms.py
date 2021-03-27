@@ -1,8 +1,22 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, DateField
 from wtforms.validators import InputRequired, ValidationError,DataRequired, EqualTo
+
 from app.models import *
 import datetime
+
+
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    submit = SubmitField('Request Password Reset')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Request Password Reset')
+
+#################----------------#####################
 
 def invalid_credentials(form,field):
     mail_id_entered = form.mail_id.data

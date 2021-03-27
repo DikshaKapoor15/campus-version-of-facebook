@@ -19,7 +19,9 @@ def send_password_reset_email(user):
     print("in email.py --- reset password'''")
     token = user.get_reset_password_token()
     send_email(' Reset Your Password',
+
                sender="developmentsoftware305@gmail.com",
+
                recipients=[user.mail_id],
                text_body=render_template('email/reset_password.txt',
                                          user=user, token=token),

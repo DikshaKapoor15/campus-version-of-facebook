@@ -24,7 +24,8 @@ class Credentials(UserMixin, db.Model):
                             algorithms=['HS256'])['reset_password']
         except:
             return
-        print("heyymodels",id)
+
+        print("heyymodels", id)
         return id
 
 

@@ -1,7 +1,7 @@
 from app import app
 from app.forms import *
 from app.models import *
-from flask import render_template, url_for, redirect,request, jsonify
+from flask import render_template, url_for, redirect,request, jsonify,abort
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from sqlalchemy import create_engine
 from flask_mail import Mail, Message  ##to be checked
@@ -18,6 +18,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
+ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+
 # session = db.session()
 # cursor = session.execute(sql).cursor
 
@@ -31,6 +33,7 @@ app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USERNAME'] = 'developmentsoftware305@gmail.com'
 app.config['MAIL_PASSWORD'] = 'tempmail1@'
+
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
@@ -41,8 +44,9 @@ def load_user(id):
     return Credentials.query.get(int(id))
 
 
+
 @app.route('/', methods=['GET', 'POST'])
-    
+
 @app.route('/login', methods = ['GET','POST'])
 def login():
     login_form = LoginForm()
@@ -85,6 +89,7 @@ def reset_password_request():
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+
     idRec = Credentials.verify_reset_password_token(token)
     print("heyyyyyyappplication""", idRec)
     # if not user:
@@ -102,6 +107,7 @@ def reset_password(token):
         print("heyy after reset password in database", user.password)
         #flash('Your password has been reset.')
         return redirect(url_for('login'))
+
     return render_template('reset_password.html', form=form)
 
 
