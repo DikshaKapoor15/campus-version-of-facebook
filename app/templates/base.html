@@ -1,0 +1,14 @@
+<html>
+  <head>
+    {% if title %}
+    <title>{{ title }}-Facebook</title>
+    {% else %}
+    <title>Welcome to College facebook</title>
+    {% endif %}
+  </head>
+  <body>
+
+    <hr>
+    {% block content %}{% endblock %}
+  </body>
+</html>
