@@ -10247,3 +10247,49 @@ body {
 .sb-sidenav-light .sb-sidenav-footer {
   background-color: #e9ecef;
 }
+
+.post1{top:300px;
+  left:500px;
+  position:absolute;
+  background:white;
+  width:580px;
+  height:600px;
+  border-radius:3px/3px;
+  padding-left:10px;
+  padding-right:10px;
+  padding-top:10px;
+  }
+p1{color:#1b6192;
+    font-family:verdana;
+    font-size:15px;}
+p2{color:#868383;
+    font-family:verdana;
+    font-size:15px;}
+p3{color:#1b6192;
+      font-family:verdana;
+      font-size:15px;
+      font-weight:bold;}
+p4{color:#868383;
+      font-family:verdana;
+      font-size:10px;}
+p6{color:#1b6192;
+      font-family:verdana;
+      font-size:15px;
+      word-spacing:10px;}
+#commentprof2{top:550px;
+        left:0px;
+        width:25px;
+        height:25px;}
+#commentboxpos2{top:550px;
+          left:40px;
+          width:500px;
+          height:30px;}
+#commentbox{
+            height:30;
+            width:500;}
+
+#post2text{left:50px;
+              top:10px;
+              padding-top:0px;
+              height:20px;
+              width:400px;}
