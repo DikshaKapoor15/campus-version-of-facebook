@@ -1,12 +1,15 @@
 from app import app
 from app.forms import *
 from app.models import *
-from flask import render_template, url_for, redirect,request, jsonify,abort
+from flask import render_template, url_for, redirect, request, jsonify, abort, flash
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from sqlalchemy import create_engine
 from flask_mail import Mail, Message  ##to be checked
 from app.email import *
 from itsdangerous import URLSafeTimedSerializer ##to be checked
+import os
+import secrets
+from PIL import Image
 
 engine = create_engine('postgres://odebgxxluzxqto:02911cc1fe5c97f0916d6a05760b41704668ab6013b712674a3b677f127ac1db@ec2-54-205-183-19.compute-1.amazonaws.com:5432/db0511lmef59sk')
 connection = engine.raw_connection()
@@ -120,6 +123,66 @@ def create_post():
         db.session.commit()
         return "submited successfully"
     return render_template('post.html',form = post_form)
+
+#################for updating profile####################################
+
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+
+    output_size = (125, 125)  ###for resizing
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+    return picture_fn
+
+
+@app.route('/updateAccount', methods=['GET', 'POST'])
+# @login_required    to be checked
+def updateAccount():
+    form = UpdateYourAccountForm()
+    if form.validate_on_submit():
+        picture_file=" "
+        if form.image_file.data:
+            picture_file = save_picture(form.image_file.data)
+            # current_user.image_file = picture_file  to be checkeddd
+        # image_file=picture_file
+        ###yet to be seen
+        mail_id = form.mail_id.data
+        if mail_id!= current_user.mail_id:
+                user = Profile.query.filter_by(mail_id=mail_id).first()
+                if user:
+                    raise ValidationError('That email is taken. Please choose a different one.')
+        ##to be seen
+        full_name = form.full_name.data
+        prof = Profile(full_name=form.full_name.data, year=form.year.data,
+                       department=form.department.data, degree=form.degree.data, mail_id=mail_id, image_file=picture_file)
+        mycursor.execute("UPDATE profile SET full_name= '{fullName}', year='{year}', department='{dept}', degree='{degree}', mail_id='{mail}' WHERE mail_id = '{mailId}' ".format(fullName=str(form.full_name.data),year=int(form.year.data), dept=str(form.department.data),degree=str(form.degree.data), mail=str(form.mail_id.data), mailId=str(current_user.mail_id)))
+        mycursor.execute("UPDATE credentials SET mail_id = '{mail}' WHERE mail_id = '{mailId}' ".format(mail=str(form.mail_id.data), mailId=str(current_user.mail_id)))
+        connection.commit()
+        ### THIS UPDATING INFO TO BE SEEN YET
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('create_post'))    #redirection to be seennn
+
+    elif request.method == 'GET':
+         # form.full_name.data = current_user.full_name
+         user = Profile.query.filter_by(mail_id=current_user.mail_id).first()   ###nothing done for error
+         #others fields to be added yet
+         form.mail_id.data = user.mail_id
+         form.full_name.data=user.full_name
+         form.year.data = user.year
+         form.department.data=user.department
+         form.degree.data = user.degree
+
+
+
+
+    # imagefile = url_for('static', filename='profile_pics/' + user.image_file)
+    return render_template('updateAccount.html', title='Account',form=form)
+
+     ##image_file to be passed yet
 
 @app.route("/logout", methods=['GET'])
 def logout():

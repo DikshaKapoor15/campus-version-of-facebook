@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, DateField
 from wtforms.validators import InputRequired, ValidationError,DataRequired, EqualTo
+from flask_wtf.file import FileField, FileAllowed
+from flask_login import current_user   ##this functionality already exists
 
 from app.models import *
 import datetime
@@ -77,4 +79,23 @@ class ResetPasswordForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Request Password Reset')
+
+class UpdateYourAccountForm(FlaskForm):
+    mail_id = StringField('mail_id')  #validators=[invalid_mail,InputRequired(message="Mail already exists")], check this
+    full_name = StringField('full_name')
+    year = IntegerField('year')
+    department = StringField('department')
+    degree = StringField('degree')
+    image_file = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField('Update')
+
+
+    #####____________________THese checks need to be reevaluated__________________________#####
+    # def validate_email(self, mail_id):
+    #     if mail_id.data != mail_id.email:
+    #         user = Profile.query.filter_by(mail_id=mail_id.data).first()
+    #         if user:
+    #             raise ValidationError('That email is taken. Please choose a different one.')
+
+
 
