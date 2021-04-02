@@ -104,7 +104,6 @@ def reset_password(token):
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
 
-
 @app.route('/create_post', methods = ['GET','POST'])
 def create_post():
     post_form = PostForm()
@@ -118,6 +117,4 @@ def create_post():
 @app.route("/logout", methods=['GET'])
 def logout():
     logout_user()
-    return "you are logged out"
-
-a
+    return redirect(url_for('login'))
