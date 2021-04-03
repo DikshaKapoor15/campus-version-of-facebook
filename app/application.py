@@ -144,7 +144,7 @@ def save_picture(form_picture):
 def updateAccount():
     form = UpdateYourAccountForm()
     if form.validate_on_submit():
-        picture_file=" "
+        # picture_file=" "
         if form.image_file.data:
             picture_file = save_picture(form.image_file.data)
             # current_user.image_file = picture_file  to be checkeddd
@@ -158,7 +158,7 @@ def updateAccount():
         ##to be seen
         full_name = form.full_name.data
         prof = Profile(full_name=form.full_name.data, year=form.year.data,
-                       department=form.department.data, degree=form.degree.data, mail_id=mail_id, image_file=picture_file)
+                       department=form.department.data, degree=form.degree.data, mail_id=mail_id)  #image_file=picture_file
         mycursor.execute("UPDATE profile SET full_name= '{fullName}', year='{year}', department='{dept}', degree='{degree}', mail_id='{mail}' WHERE mail_id = '{mailId}' ".format(fullName=str(form.full_name.data),year=int(form.year.data), dept=str(form.department.data),degree=str(form.degree.data), mail=str(form.mail_id.data), mailId=str(current_user.mail_id)))
         mycursor.execute("UPDATE credentials SET mail_id = '{mail}' WHERE mail_id = '{mailId}' ".format(mail=str(form.mail_id.data), mailId=str(current_user.mail_id)))
         connection.commit()
@@ -167,22 +167,24 @@ def updateAccount():
         return redirect(url_for('create_post'))    #redirection to be seennn
 
     elif request.method == 'GET':
-         # form.full_name.data = current_user.full_name
-         user = Profile.query.filter_by(mail_id=current_user.mail_id).first()   ###nothing done for error
-         #others fields to be added yet
-         form.mail_id.data = user.mail_id
-         form.full_name.data=user.full_name
-         form.year.data = user.year
-         form.department.data=user.department
-         form.degree.data = user.degree
-
-
-
+        user = Profile.query.filter_by(mail_id=current_user.mail_id).first()  ###nothing done for error
+        form.mail_id.data = user.mail_id
+        form.full_name.data = user.full_name
+        form.year.data = user.year
+        form.department.data = user.department
+        form.degree.data = user.degree
 
     # imagefile = url_for('static', filename='profile_pics/' + user.image_file)
-    return render_template('updateAccount.html', title='Account',form=form)
+    return render_template('updateAccount.html', title='Account', form=form)
+    ##image_file to be passed yet
 
-     ##image_file to be passed yet
+
+
+
+
+
+
+
 
 @app.route("/logout", methods=['GET'])
 def logout():
