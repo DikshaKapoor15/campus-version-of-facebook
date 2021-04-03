@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+          <form method="post"  action="{{ url_for('home')}}">
+              {{form.csrf_token}}
+              {{form.tag_search.label}}
+              {{form.tag_search}}
+
+         <input type="submit"  id ="btn" value="Search">
+
+          </form>
+
+<div id="output">
+</div>
+
+<script>
+$( document ).ready(function() {
+
+         $.ajax({
+                url : "/homeSearch",
+                type : "GET",
+                success : function(data)
+                    {
+
+                        $("#output").html(data);
+                         $("#output").append(data.htmlresponse);
+
+
+
+                    } ,
+
+                 error : function(error)
+                 { console.log(error) ; }
+
+             });
+
+
+      $("#btn").click(function(e){
+              var tag = $("#tag_search").val();
+               alert("tttttt");
+               console.log(tag);
+               $.ajax({
+                url : "/homeSearch",
+                type : "POST",
+                data : {"tag" : tag},
+                success : function(data)
+                    {
+                        alert("success");
+                        $("#output").html(data);
+                         $("#output").append(data.htmlresponse);
+
+                       console.log("response");
+
+                    } ,
+
+                 error : function(error)
+                 { console.log(error) ; }
+
+             });
+
+          e.preventDefault();
+}) ;
+
+});
+
+</script>
+</body>
+</html>
+

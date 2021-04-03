@@ -43,19 +43,32 @@ class RegistrationForm(FlaskForm):
 
 
 
-class PostForm(FlaskForm):
+class PosttForm(FlaskForm):
     post_description = StringField('caption')
     post_img = FileField("upload")
     tag1 = StringField("tag1",validators=[InputRequired()])
     tag2 = StringField("tag2")
     tag3 = StringField("tag3")
-    date = DateField("date")
+    date = DateField("date",format='%Y-%m-%d')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.date.data:
             self.date.data = datetime.date.today()
 
+class PostForm(FlaskForm):
+    mail_id = StringField('mail_id')
+    post_date = DateField(format='%Y-%m-%d')
+    post_description = StringField('post_description')
+    tag1 = StringField('tag1')
+    tag2 = StringField('tag2')
+    tag3 = StringField('tag3')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.post_date.data:
+            self.post_date.data = datetime.date.today()
 
 
-
+class HomeForm(FlaskForm):
+    tag_search = StringField('enter the tag : ')

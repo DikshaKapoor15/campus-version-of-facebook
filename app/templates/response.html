@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>seearch</title>
+</head>
+<body>
+      <table class="table table-striped custad">
+          <thead>
+              <tr>
+                   <th>Email</th>
+                  <th>date</th>
+                  <th>description</th>
+                  <th>tag1</th>
+                  <th>tag2</th>
+                  <th>tag3</th>
+              </tr>
+          </thead>
+          <tbody>
+               {% for row in data %}
+                <tr>
+                    <th>{{row[0]}}</th>
+                    <th>{{row[1]}}</th>
+                    <th>{{row[2]}}</th>
+                    <th>{{row[3]}}</th>
+                    <th>{{row[4]}}</th>
+                    <th>{{row[5]}}</th>
+                </tr>
+                 {% endfor %}
+          </tbody>
+      </table>
+</body>
+</html>

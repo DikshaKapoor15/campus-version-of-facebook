@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>view</title>
+</head>
+<body>
+      {% for d in data%}
+      <p> {{ d[1] }}          {{d[3]}}</br>
+          <img  src="data:image/jpeg;base64,{{ d[4] }}"/></br>
+          caption : {{ d[2] }} </br>
+          tags: {{d[5]}}  {{d[6]}} {{d[7]}}
+      </p>
+            </br>
+        {% endfor %}
+
+</body>
+</html>
+
