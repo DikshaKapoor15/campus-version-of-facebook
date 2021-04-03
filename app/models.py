@@ -41,3 +41,12 @@ class Postss(db.Model):
         self.tag3 =t3
         self.post_img = pi
         #print(pd,t1,t2,t3,sep=" ")
+
+class Posts(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    mail_id = db.Column(db.String(25), nullable = False)
+    date = db.Column(db.DateTime(timezone=False), nullable=False)
+    post_description =db.Column(db.String(), nullable = False)
+    tag1 = db.Column(db.String(), nullable = False)
+    tag2 = db.Column(db.String())
+    tag3 = db.Column(db.String())

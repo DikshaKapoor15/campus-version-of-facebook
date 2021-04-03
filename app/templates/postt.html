@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>post</title>
+</head>
+<body>
+        <form method="post" action="{{ url_for('postt')}}" enctype="multipart/form-data">
+          {{form.hidden_tag()}}
+
+            {{form.post_img.label}}
+            {{form.post_img}}
+        </br>
+        </br>
+            {{form.post_description.label}}
+            {{form.post_description}}
+        </br>
+            </br>
+            {{form.tag1.label}}
+            {{form.tag1}}
+
+            {{form.tag2.label}}
+            {{form.tag2}}
+
+            {{form.tag3.label}}
+            {{form.tag3}}
+          </br>
+            </br>
+            <input type="submit" value="post">
+        </form>
+
+</body>
+</html>
