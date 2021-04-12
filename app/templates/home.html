@@ -9,19 +9,77 @@
         <title>Facebook</title>
         <link href="{{ url_for('static',filename='styles/home_style.css') }}" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+
+        <script>
+        $(document).ready(function(){
+
+             $.ajax({
+                url : "/homeSearch",
+                type : "GET",
+                success : function(data)
+                    {
+
+                        $("#output").html(data);
+                         $("#output").append(data.htmlresponse);
+
+
+
+                    } ,
+
+                 error : function(error)
+                 { console.log(error) ; }
+
+             });
+
+
+            $("#btn").click(function(e){
+
+               alert("tttttt");
+               var tag = $("#tag_search").val();
+               console.log(tag);
+               $.ajax({
+                url : "/homeSearch",
+                type : "POST",
+                data : {"tag" : tag},
+                success : function(data)
+                    {
+                        alert("success");
+                        $("#output").html(data);
+                         $("#output").append(data.htmlresponse);
+
+                       console.log("response");
+
+                    } ,
+
+                 error : function(error)
+                 { console.log(error) ; }
+
+
+             });
+
+          e.preventDefault();
+      }) ;
+      });
+
+
+</script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- <a class="navbar-brand" href="index.html">Start Bootstrap</a> -->
-            <a class="navbar-brand" >Facebook Campus</a>
+            <a class="navbar-brand" >Campus Facebook</a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
-            <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+            <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0"  method="POST"  action="{{ url_for('home')}}">
                 <div class="input-group">
-                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
+                    {{form.csrf_token}}
+
+<!--                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />-->
+                                 {{form.tag_search(class="form-control",type="text",placeholder="Search for..." , id = "tag_search")}}
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
+                        <input type="submit"  id ="btn" value="Search">
                     </div>
                 </div>
             </form>
@@ -33,7 +91,7 @@
                         <a class="dropdown-item" href="#">Profile</a>
                         <!-- <a class="dropdown-item" href="#">Activity Log</a> -->
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="login.html">Logout</a>
+                        <a class="dropdown-item" href="{{url_for('logout')}}">Logout</a>
                     </div>
                 </li>
             </ul>
@@ -43,16 +101,16 @@
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
-                            
-                            
+
+
                             <div class="sb-sidenav-menu-heading">Features</div>
                             <a class="nav-link" >
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 Create Event
                             </a>
-                            <a class="nav-link" >
+                            <a class="nav-link" href="{{url_for('create_post')}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                Create post 
+                                Create post
                             </a>
                             <a class="nav-link" >
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
@@ -60,7 +118,7 @@
                             </a>
                         </div>
                     </div>
-                    
+
                 </nav>
             </div>
             <div id="layoutSidenav_content">
@@ -107,52 +165,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="post1">
-                                <img src="im3.jpeg" alt="image is here" 
-                                    height="40" width="40" /><br>
-                                <img src="im2.jpg" alt="image is here" 
-                                    height="400" width="575" /><br><br>
-                                <p6>Interested</p6><br>
-                                <hr>
-                                <!-- <p1>Amit Deb</p1>
-                                <p2> and</p2>
-                                <p1> 5 others</p1>
-                                <p2> like this</p2> -->
-                                <div id="post2text" class="post1">
-                                    <p3>Name </p3>
-                                    <p2>posted this at  </p2>
-                                    <p1> time</p1>
-                                    <!-- <p2> and</p2>
-                                    <p1> 15 others.</p1><br>
-                                    <p4>4 hrs.</p4> -->
-                                </div>
-                                <!-- <div id="commentprof2" class="post1">
-                                    <img src="im3.pjeg" alt="image is here" 
-                                        height="25" width="25" id="profpic" />
-                                </div> -->
-                                <!-- <div id="commentboxpos2" class="post1">
-                                    <input type="text" placeholder="comment" 
-                                        id="commentbox" />
-                                </div> -->
-                                <div class ="desc"> Add a description</div>
-                                    <div class ="desc"> Add a description</div>
-                            </div>
-                        
-                            
+                              <div id="output">
+                              </div>
                         </div>
                     </div>
                 </main>
-                
+
             </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="{{ url_for('static',filename='javascript/home_script.js') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/chart-area-demo.js"></script>
-        <script src="assets/demo/chart-bar-demo.js"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/datatables-demo.js"></script>
+
     </body>
 </html>
