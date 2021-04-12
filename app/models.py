@@ -24,8 +24,7 @@ class Credentials(UserMixin, db.Model):
                             algorithms=['HS256'])['reset_password']
         except:
             return
-
-        print("heyymodels", id)
+        print("heyymodels",id)
         return id
 
 
@@ -36,7 +35,6 @@ class Profile(db.Model):
     year = db.Column(db.Integer, nullable = False)
     department = db.Column(db.String(), nullable= False)
     degree = db.Column(db.String(), nullable= False)
-    image_file = db.Column(db.String(20), default='default.jpg')   ##to be seen
 
 class Posts(db.Model):
     id = db.Column(db.Integer, primary_key = True)
