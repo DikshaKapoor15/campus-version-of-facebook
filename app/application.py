@@ -1,10 +1,11 @@
 from app import app
 from app.forms import *
 from app.models import *
-from flask import render_template, url_for, redirect,request, jsonify,abort
+from flask import render_template, url_for, redirect,request, jsonify
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from sqlalchemy import create_engine
 from flask_mail import Mail, Message  ##to be checked
+from base64 import b64encode
 from app.email import *
 from itsdangerous import URLSafeTimedSerializer ##to be checked
 
@@ -16,8 +17,6 @@ app.config[
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
-
 ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 # session = db.session()
@@ -33,7 +32,6 @@ app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USERNAME'] = 'developmentsoftware305@gmail.com'
 app.config['MAIL_PASSWORD'] = 'tempmail1@'
-
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
@@ -44,9 +42,8 @@ def load_user(id):
     return Credentials.query.get(int(id))
 
 
-
 @app.route('/', methods=['GET', 'POST'])
-
+    
 @app.route('/login', methods = ['GET','POST'])
 def login():
     login_form = LoginForm()
@@ -58,7 +55,7 @@ def login():
                 user_object = Credentials.query.filter_by(mail_id = login_form.mail_id.data).first()
                 login_user(user_object)
 
-                return redirect(url_for('create_post'))
+                return redirect(url_for('home'))
         elif request.form["action"] == "Register":
             if reg_form.validate_on_submit():
                 mail_id = reg_form.mail_id.data
@@ -89,7 +86,6 @@ def reset_password_request():
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
-
     idRec = Credentials.verify_reset_password_token(token)
     print("heyyyyyyappplication""", idRec)
     # if not user:
@@ -107,9 +103,45 @@ def reset_password(token):
         print("heyy after reset password in database", user.password)
         #flash('Your password has been reset.')
         return redirect(url_for('login'))
-
     return render_template('reset_password.html', form=form)
 
+@app.route('/home',methods=["POST","GET"])
+def home():
+
+    hform=HomeForm()
+    return render_template('home.html', form=hform)
+
+@app.route('/homeSearch',methods=["POST","GET"])
+def homeSearch():
+
+    #print("f2")
+    if request.method == "GET":
+        mycursor.execute("select distinct  p.full_name, po.date,po.post_description,po.tag1,po.tag2,po.tag3 from posts as po , profile as p where p.mail_id=po.mail_id order by po.date desc")
+        data = mycursor.fetchall()
+        #print(data)
+        mycursor.execute("SELECT distinct p.id, pr.full_name, p.post_description, p.date, p.post_img, p.tag1, p.tag2, p.tag3 FROM postss as p, profile as pr where pr.mail_id = p.mail_id order by p.date desc")
+        data1 = mycursor.fetchall()
+        #print(data1)
+        data1 = [list(x) for x in data1]
+        imgs = [b64encode(x[4]) for x in data1]
+        imgs = [x.decode('utf-8') for x in imgs]
+        for i in range(len(data1)):
+            data1[i][4]=imgs[i]
+        return jsonify({"htmlresponse": render_template('response.html', data1=data1, data = data )})
+    elif request.method == "POST":
+        x=request.form['tag']
+        mycursor.execute(" select distinct  p.full_name, po.date,po.post_description,po.tag1,po.tag2,po.tag3 from posts as po , profile as p where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}') order by date desc".format(str(x)))
+        data=mycursor.fetchall()
+        mycursor.execute(" select distinct po.id, p.full_name, po.post_description,po.date,po.post_img,po.tag1,po.tag2,po.tag3 from postss as po , profile as p where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}')  order by date desc".format(str(x)))
+        data1 = mycursor.fetchall()
+        data1 = [list(x) for x in data1]
+        imgs = [b64encode(x[4]) for x in data1]
+        imgs = [x.decode('utf-8') for x in imgs]
+        for i in range(len(data1)):
+            data1[i][4] = imgs[i]
+        print(data1)
+        return jsonify({"htmlresponse": render_template('response.html',data=data, data1 =data1)})
+    return jsonify({"error":"500 400 401"})
 
 @app.route('/create_post', methods = ['GET','POST'])
 def create_post():
@@ -124,4 +156,5 @@ def create_post():
 @app.route("/logout", methods=['GET'])
 def logout():
     logout_user()
-    return "you are logged out"
+    return redirect(url_for('login'))
+
