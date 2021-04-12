@@ -1,15 +1,13 @@
 from app import app
 from app.forms import *
 from app.models import *
-from flask import render_template, url_for, redirect, request, jsonify, abort, flash
+from flask import render_template, url_for, redirect,request, jsonify
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from sqlalchemy import create_engine
 from flask_mail import Mail, Message  ##to be checked
+from base64 import b64encode
 from app.email import *
 from itsdangerous import URLSafeTimedSerializer ##to be checked
-import os
-import secrets
-from PIL import Image
 
 engine = create_engine('postgres://odebgxxluzxqto:02911cc1fe5c97f0916d6a05760b41704668ab6013b712674a3b677f127ac1db@ec2-54-205-183-19.compute-1.amazonaws.com:5432/db0511lmef59sk')
 connection = engine.raw_connection()
@@ -19,8 +17,6 @@ app.config[
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
-
 ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 # session = db.session()
@@ -36,7 +32,6 @@ app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USERNAME'] = 'developmentsoftware305@gmail.com'
 app.config['MAIL_PASSWORD'] = 'tempmail1@'
-
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
@@ -47,9 +42,8 @@ def load_user(id):
     return Credentials.query.get(int(id))
 
 
-
 @app.route('/', methods=['GET', 'POST'])
-
+    
 @app.route('/login', methods = ['GET','POST'])
 def login():
     login_form = LoginForm()
@@ -61,7 +55,7 @@ def login():
                 user_object = Credentials.query.filter_by(mail_id = login_form.mail_id.data).first()
                 login_user(user_object)
 
-                return redirect(url_for('create_post'))
+                return redirect(url_for('home'))
         elif request.form["action"] == "Register":
             if reg_form.validate_on_submit():
                 mail_id = reg_form.mail_id.data
@@ -92,7 +86,6 @@ def reset_password_request():
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
-
     idRec = Credentials.verify_reset_password_token(token)
     print("heyyyyyyappplication""", idRec)
     # if not user:
@@ -110,9 +103,45 @@ def reset_password(token):
         print("heyy after reset password in database", user.password)
         #flash('Your password has been reset.')
         return redirect(url_for('login'))
-
     return render_template('reset_password.html', form=form)
 
+@app.route('/home',methods=["POST","GET"])
+def home():
+
+    hform=HomeForm()
+    return render_template('home.html', form=hform)
+
+@app.route('/homeSearch',methods=["POST","GET"])
+def homeSearch():
+
+    #print("f2")
+    if request.method == "GET":
+        mycursor.execute("select distinct  p.full_name, po.date,po.post_description,po.tag1,po.tag2,po.tag3 from posts as po , profile as p where p.mail_id=po.mail_id order by po.date desc")
+        data = mycursor.fetchall()
+        #print(data)
+        mycursor.execute("SELECT distinct p.id, pr.full_name, p.post_description, p.date, p.post_img, p.tag1, p.tag2, p.tag3 FROM postss as p, profile as pr where pr.mail_id = p.mail_id order by p.date desc")
+        data1 = mycursor.fetchall()
+        #print(data1)
+        data1 = [list(x) for x in data1]
+        imgs = [b64encode(x[4]) for x in data1]
+        imgs = [x.decode('utf-8') for x in imgs]
+        for i in range(len(data1)):
+            data1[i][4]=imgs[i]
+        return jsonify({"htmlresponse": render_template('response.html', data1=data1, data = data )})
+    elif request.method == "POST":
+        x=request.form['tag']
+        mycursor.execute(" select distinct  p.full_name, po.date,po.post_description,po.tag1,po.tag2,po.tag3 from posts as po , profile as p where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}') order by date desc".format(str(x)))
+        data=mycursor.fetchall()
+        mycursor.execute(" select distinct po.id, p.full_name, po.post_description,po.date,po.post_img,po.tag1,po.tag2,po.tag3 from postss as po , profile as p where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}')  order by date desc".format(str(x)))
+        data1 = mycursor.fetchall()
+        data1 = [list(x) for x in data1]
+        imgs = [b64encode(x[4]) for x in data1]
+        imgs = [x.decode('utf-8') for x in imgs]
+        for i in range(len(data1)):
+            data1[i][4] = imgs[i]
+        print(data1)
+        return jsonify({"htmlresponse": render_template('response.html',data=data, data1 =data1)})
+    return jsonify({"error":"500 400 401"})
 
 @app.route('/create_post', methods = ['GET','POST'])
 def create_post():
@@ -124,69 +153,8 @@ def create_post():
         return "submited successfully"
     return render_template('post.html',form = post_form)
 
-#################for updating profile####################################
-
-def save_picture(form_picture):
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-
-    output_size = (125, 125)  ###for resizing
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
-    return picture_fn
-
-
-@app.route('/updateAccount', methods=['GET', 'POST'])
-# @login_required    to be checked
-def updateAccount():
-    form = UpdateYourAccountForm()
-    if form.validate_on_submit():
-        # picture_file=" "
-        if form.image_file.data:
-            picture_file = save_picture(form.image_file.data)
-            # current_user.image_file = picture_file  to be checkeddd
-        # image_file=picture_file
-        ###yet to be seen
-        mail_id = form.mail_id.data
-        if mail_id!= current_user.mail_id:
-                user = Profile.query.filter_by(mail_id=mail_id).first()
-                if user:
-                    raise ValidationError('That email is taken. Please choose a different one.')
-        ##to be seen
-        full_name = form.full_name.data
-        prof = Profile(full_name=form.full_name.data, year=form.year.data,
-                       department=form.department.data, degree=form.degree.data, mail_id=mail_id)  #image_file=picture_file
-        mycursor.execute("UPDATE profile SET full_name= '{fullName}', year='{year}', department='{dept}', degree='{degree}', mail_id='{mail}' WHERE mail_id = '{mailId}' ".format(fullName=str(form.full_name.data),year=int(form.year.data), dept=str(form.department.data),degree=str(form.degree.data), mail=str(form.mail_id.data), mailId=str(current_user.mail_id)))
-        mycursor.execute("UPDATE credentials SET mail_id = '{mail}' WHERE mail_id = '{mailId}' ".format(mail=str(form.mail_id.data), mailId=str(current_user.mail_id)))
-        connection.commit()
-        ### THIS UPDATING INFO TO BE SEEN YET
-        flash('Your account has been updated!', 'success')
-        return redirect(url_for('create_post'))    #redirection to be seennn
-
-    elif request.method == 'GET':
-        user = Profile.query.filter_by(mail_id=current_user.mail_id).first()  ###nothing done for error
-        form.mail_id.data = user.mail_id
-        form.full_name.data = user.full_name
-        form.year.data = user.year
-        form.department.data = user.department
-        form.degree.data = user.degree
-
-    # imagefile = url_for('static', filename='profile_pics/' + user.image_file)
-    return render_template('updateAccount.html', title='Account', form=form)
-    ##image_file to be passed yet
-
-
-
-
-
-
-
-
-
 @app.route("/logout", methods=['GET'])
 def logout():
     logout_user()
-    return "you are logged out"
+    return redirect(url_for('login'))
+
