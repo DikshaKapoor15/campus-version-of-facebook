@@ -113,14 +113,12 @@ def reset_password(token):
 
 @app.route('/home',methods=["POST","GET"])
 def home():
-
     hform=HomeForm() #loading of home form from forms.py
     return render_template('home.html', form=hform) 
 
 #re-directed to homeSearch route by url present in ajax in home.html
 @app.route('/homeSearch',methods=["POST","GET"])
-def homeSearch():
-  
+def homeSearch():  
     if request.method == "GET": # if no tag is searched method is GET 
         # query to select all posts in database ordered by post date  without images
         mycursor.execute("select distinct  p.full_name, po.date,po.post_description,po.tag1,po.tag2,po.tag3 from posts as po , profile as p where p.mail_id=po.mail_id order by po.date desc")
