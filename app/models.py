@@ -13,11 +13,18 @@ class Credentials(UserMixin, db.Model):
     mail_id = db.Column(db.String(50), unique = True, nullable = False)
     password = db.Column(db.String(), nullable= False)
 
+    #get_reset_password_token() function returns a jwt token as a string which is generated directly by jwt.encode()
     def get_reset_password_token(self, expires_in=6000):
         return jwt.encode(
             {'reset_password': self.mail_id, 'exp': time() + expires_in},
             app.config['SECRET_KEY'], algorithm='HS256')
 
+    #verify_reset_password_token() is a static method(can be invoked directly from class)
+    #this method takes token and attempts to decode it by pyJWT's jwt.decode()
+    #if the token is invalid , an exception will be raised, and in that case i catch it to prevent the error, and
+    #return none to the caller
+
+    ##if the token is valid, id is returned from the token's payload by decdding it
     @staticmethod
     def verify_reset_password_token(token):
         try:
@@ -25,7 +32,7 @@ class Credentials(UserMixin, db.Model):
                             algorithms=['HS256'])['reset_password']
         except:
             return
-        print("heyymodels",id)
+
         return id
 
 # attributes in the profile table
