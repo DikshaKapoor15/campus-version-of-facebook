@@ -14,30 +14,31 @@
 <body>
 <script>
 $(document).ready(function() {
-   var calendar = $('#calendar').fullCalendar({
+   var calendar = $('#calendar').fullCalendar({   // calendar is  created at div with id='calendar'
 
 
-    editable:true,
+    editable:true,                 
     header:{
-     left:'prev,next today',
-     center:'title',
-     right:'month,agendaWeek,agendaDay'
+     left:'prev,next today',              // created buttons to view previous,next weeks days month and today
+     center:'title',                     // name of the month
+     right:'month,agendaWeek,agendaDay'   // options to view events in the calendar of the selected month or week or day respectively    
     },
+       //events are displayed from the data
     events : [{% for row in data %}{ id : '{{row[0]}}', title : '{{row[1]}}', start : '{{row[2]}}', end : '{{row[3]}}',},{% endfor %}],
     selectable:true,
 
 
 
-     eventClick: function(event) {
+     eventClick: function(event) {  // this function is used to view evnt details after selecting the events
 
 
               //  alert('Event: ' + event.title);
-                var start = $.fullCalendar.formatDate(event.start, "DD-MM-YY");
-                var start1 = $.fullCalendar.formatDate(event.start, "HH:mm");
-                var end = $.fullCalendar.formatDate(event.end, "DD-MM-YY");
-                var end1 = $.fullCalendar.formatDate(event.end, "HH:mm");
+                var start = $.fullCalendar.formatDate(event.start, "DD-MM-YY");    // extracting  the start day of the selected event
+                var start1 = $.fullCalendar.formatDate(event.start, "HH:mm");       // extracting  the start time of the selected event    
+                var end = $.fullCalendar.formatDate(event.end, "DD-MM-YY");        // extracting  the end day of the selected event
+                var end1 = $.fullCalendar.formatDate(event.end, "HH:mm");      // extracting  the end time of the selected event
                // console.log(start);
-         alert('Event: ' + event.title+'\n'+'Start: '+start+' at '+start1+'\nEnd: '+end+' at ' +end1);
+         alert('Event: ' + event.title+'\n'+'Start: '+start+' at '+start1+'\nEnd: '+end+' at ' +end1); // alert box to display all the details
 
        //  alert('Event: ' + event.title+'\n'+'Start: '+start+'\nEnd: '+end);
 

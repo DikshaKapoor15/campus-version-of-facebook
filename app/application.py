@@ -171,13 +171,13 @@ def homeSearch():
 
 @app.route('/create_post', methods = ['GET','POST'])
 def create_post():
-    post_form = PostForm()
-    if post_form.validate_on_submit():
-        newpost = Posts(mail_id = current_user.mail_id, date = post_form.post_date.data, post_description = post_form.post_description.data, tag1 = post_form.tag1.data, tag2 = post_form.tag2.data, tag3 = post_form.tag3.data )
+    post_form = PostForm() # loading post form
+    if post_form.validate_on_submit(): # if validators on the form are true
+        newpost = Posts(mail_id = current_user.mail_id, date = post_form.post_date.data, post_description = post_form.post_description.data, tag1 = post_form.tag1.data, tag2 = post_form.tag2.data, tag3 = post_form.tag3.data ) # creating posts object
         db.session.add(newpost)
-        db.session.commit()
+        db.session.commit() # adding data to posts table in database
         return "submited successfully"
-    return render_template('post.html',form = post_form)
+    return render_template('post.html',form = post_form) # return post form if get method
 
 @app.route('/calendar',methods=["GET","POST"])
 def calendar():
@@ -195,7 +195,7 @@ def calendar():
         data[i].append(timedate1[i]) # appending the combined start date and time event.
         data[i].append(timedate2[i]) # appending the combined end date and time of an event.
 
-    return render_template("calendar1.html",data=data) 
+    return render_template("calendar1.html",data=data) # return calendar
 
 # logout route
 @app.route("/logout", methods=['GET'])
