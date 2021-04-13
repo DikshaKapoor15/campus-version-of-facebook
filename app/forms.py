@@ -41,7 +41,7 @@ class LoginForm(FlaskForm):
 
 # input fields in registration form
 class RegistrationForm(FlaskForm):
-    mail_id = StringField('mail_id',validators=[InputRequired(message = "Mail already exists"), invalid_mail,, Email("This field requires a valid email address")]) #only email-id are accepted
+    mail_id = StringField('mail_id',validators=[InputRequired(message = "Mail already exists"), invalid_mail,Email("This field requires a valid email address")]) #only email-id are accepted
     password = PasswordField('password',validators=[InputRequired(message = "Password mismatch"),invalid_password])
     confirm_password = PasswordField('confirm_password')
     full_name = StringField('full_name')
@@ -67,16 +67,16 @@ class PostForm(FlaskForm):
 
 # input fields in reset password request form
 class ResetPasswordRequestForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired()])
-    submit = SubmitField('Request Password Reset')
+    email = StringField('Email', validators=[DataRequired()]) #only email-id are accepted
+    submit = SubmitField('Request Password Reset')     #submit button field in the form
 
 
 # input fields in reset password form
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')]) #confirming the password
-    submit = SubmitField('Request Password Reset')
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')]) #confirming the password2 and checking for match using EqualTo() validator
+    submit = SubmitField('Request Password Reset')    #submit button field in the form
 
 
 # input fields in search form
