@@ -72,8 +72,8 @@ def login():
                 db.session.add(cred) # add the details to the Credentials table in database 
                 db.session.add(prof) # add the profile details to the Profile table in database
                 db.session.commit()
-                return redirect(url_for('login'))
-    return render_template("login.html", form1 = login_form, form = reg_form)
+                return redirect(url_for('login')) # redirect to login after successful registration
+    return render_template("login.html", form1 = login_form, form = reg_form) # if the method is post then return the login form
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
@@ -178,8 +178,9 @@ def calendar():
     print(data)
     return render_template("calendar1.html",data=data)
 
+# logout route
 @app.route("/logout", methods=['GET'])
 def logout():
-    logout_user()
-    return redirect(url_for('login'))
+    logout_user() # inbuilt function to logout user
+    return redirect(url_for('login')) # redirect to login page
 
