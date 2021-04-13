@@ -7,52 +7,34 @@
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
 </head>
 <body>
-<!--      {% for post in data %}-->
-<!--                            <div class="card" style="margin-left: 300px;" >-->
-<!--                                &lt;!&ndash; <div class="post1"> &ndash;&gt;-->
-<!--                                    <img src="{{url_for('static', filename = 'assets/image1.jpeg')}}" alt="image is here"-->
-<!--                                        style=" border-radius: 50%; height: 60px ; width: 60px; padding:10px 10px ;"-->
-<!--                                        /><br>-->
-<!--                                    <img src="{{url_for('static', filename = 'assets/image1.jpeg')}}" alt="image is here"-->
-<!--                                        height="400" width="575" style="padding-top: 10px;"/><br><br>-->
-
-
-
-<!--                                    <div id="post2text" class="post1">-->
-<!--                                        <p3>{{post[0]}} </p3>-->
-<!--                                        <p2>posted on  </p2>-->
-<!--                                        <p1>{{post[1]}}</p1>-->
-
-<!--                                    </div>-->
-<!--                                    <div class="container">-->
-<!--                                        <h4><b>{{post[2]}} </b></h4>-->
-<!--                                        <p>#{{post[3]}} {% if post[4] %} #{{post[4]}} {% endif %} {% if post[5] %} #{{post[5]}} {% endif %}</p>-->
-<!--                                      </div>-->
-
-<!--                                &lt;!&ndash; </div> &ndash;&gt;-->
-<!--                            </div>-->
-<!--                            <br>-->
-<!--                            {% endfor %}-->
+    
+<!--     if there are any posts  this is executed -->
 {% if data1 %}
+<!--       for every post in the data -->
       {% for d in data1 %}
                             <div class="card" style="margin-left: 200px;" >
                                 <!-- <div class="post1"> -->
                                     <img src="{{url_for('static', filename = 'assets/image1.jpeg')}}" alt="image is here"
                                         style=" border-radius: 50%; height: 60px ; width: 60px; padding:10px 10px ;"
                                         /><br>
+<!--                                                                                                 d[4] is the posted image -->
                                     <img src="data:image/jpeg;base64,{{d[4]}}" alt="image is here"
                                         height="400" width="575" style="padding-top: 10px;"/><br><br>
 
 
 
                                     <div id="post2text"  class="post1">
+<!--                                                                                                   d[1] is user full name -->
                                         <p3>{{d[1]}} </p3>
                                         <p2>posted on  </p2>
+<!--                                                                                                   d[3] is posted date -->
                                         <p1>{{d[3]}}</p1>
 
                                     </div>
                                     <div class="container">
+<!--                                                                                                    d[2] is post description -->
                                         <h4><b>{{d[2]}} </b></h4>
+<!--                                                                                                     d[5] is the mandatory tag and d[6],d[7] are optional tags (printed if they are present)  -->
                                         <p>{{d[5]}} {% if d[6] %} {{d[6]}} {% endif %} {% if d[7] %} {{d[7]}} {% endif %}</p>
                                       </div>
 
@@ -60,6 +42,7 @@
                             </div>
                             <br>
                             {% endfor %}
+<!--                                                          if no posts are present -->
 {% else %}
  <p> No posts with the searched tag <p>
 
