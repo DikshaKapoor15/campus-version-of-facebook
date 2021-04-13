@@ -7,6 +7,7 @@ from app import app
 
 db = SQLAlchemy()
 
+# attributes in the credentials table
 class Credentials(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     mail_id = db.Column(db.String(50), unique = True, nullable = False)
@@ -27,7 +28,7 @@ class Credentials(UserMixin, db.Model):
         print("heyymodels",id)
         return id
 
-
+# attributes in the profile table
 class Profile(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     mail_id = db.Column(db.String(50), unique = True, nullable = False)
@@ -36,6 +37,7 @@ class Profile(db.Model):
     department = db.Column(db.String(), nullable= False)
     degree = db.Column(db.String(), nullable= False)
 
+# attributes in the posts table
 class Posts(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     mail_id = db.Column(db.String(25), nullable = False)
