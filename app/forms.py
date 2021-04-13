@@ -35,13 +35,13 @@ def invalid_password(form,field):
 
 # input fields in login form
 class LoginForm(FlaskForm):
-    mail_id = StringField('mail_id', validators=[InputRequired(message = "Username required")])
+    mail_id = StringField('mail_id', validators=[InputRequired(message = "Username required"), Email("This field requires a valid email address")])
     password = PasswordField('Password', validators=[InputRequired(message = "Password required"),invalid_credentials])
 
 
 # input fields in registration form
 class RegistrationForm(FlaskForm):
-    mail_id = StringField('mail_id',validators=[InputRequired(message = "Mail already exists"), invalid_mail])
+    mail_id = StringField('mail_id',validators=[InputRequired(message = "Mail already exists"), invalid_mail,, Email("This field requires a valid email address")])
     password = PasswordField('password',validators=[InputRequired(message = "Password mismatch"),invalid_password])
     confirm_password = PasswordField('confirm_password')
     full_name = StringField('full_name')
