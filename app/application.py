@@ -153,6 +153,25 @@ def create_post():
         return "submited successfully"
     return render_template('post.html',form = post_form)
 
+@app.route('/calendar',methods=["GET","POST"])
+def calendar():
+    mycursor.execute("select * from events order by id")
+    data= mycursor.fetchall()
+    timedate1 =[datetime.datetime.combine(x[2],x[4]) for x in data ]
+    timedate2 = [datetime.datetime.combine(x[3],x[5]) for x in data]
+  #  print(timedate1,timedate2,sep="\n")
+    data = [list(x) for x in data]
+   # print(data)
+    for i in range(len(data)):
+        data[i].pop()
+        data[i].pop()
+        data[i].pop()
+        data[i].pop()
+        data[i].append(timedate1[i])
+        data[i].append(timedate2[i])
+    print(data)
+    return render_template("calendar1.html",data=data)
+
 @app.route("/logout", methods=['GET'])
 def logout():
     logout_user()
