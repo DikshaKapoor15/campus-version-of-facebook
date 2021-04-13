@@ -16,13 +16,13 @@
         $(document).ready(function(){
 
              $.ajax({
-                url : "/homeSearch",
-                type : "GET",
+                url : "/homeSearch",    // re-directed to the homeSearch route
+                type : "GET",           // no tag is searched
                 success : function(data)
                     {
 
-                        $("#output").html(data);
-                         $("#output").append(data.htmlresponse);
+                        $("#output").html(data);  //data is passed to  div with id='output' in this html page 
+                         $("#output").append(data.htmlresponse); // data is sent to repsonse.html and response of response.html is displayed in div with id='output' 
 
 
 
@@ -34,22 +34,22 @@
              });
 
 
-            $("#btn").click(function(e){
+            $("#btn").click(function(e){        // search button with id='btn' is clicked
 
-               alert("tttttt");
-               var tag = $("#tag_search").val();
+             //  alert("tttttt");
+               var tag = $("#tag_search").val();   // tag searched is stored in the variable tag
                console.log(tag);
                $.ajax({
-                url : "/homeSearch",
-                type : "POST",
-                data : {"tag" : tag},
+                url : "/homeSearch",                 // re-directed to the homeSearch route
+                type : "POST",                     // tag is searched
+                data : {"tag" : tag},              // tag data is sent to route with the variable name tag
                 success : function(data)
                     {
                         alert("success");
-                        $("#output").html(data);
-                         $("#output").append(data.htmlresponse);
+                        $("#output").html(data);        //data is passed to  div with id='output' in this html page 
+                         $("#output").append(data.htmlresponse); // data is sent to repsonse.html and response of response.html is displayed in div with id='output' 
 
-                       console.log("response");
+                    //   console.log("response");
 
                     } ,
 
