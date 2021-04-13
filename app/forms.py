@@ -3,6 +3,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, Integ
 from wtforms.validators import InputRequired, ValidationError,DataRequired, EqualTo
 from app.models import *
 import datetime
+import re
 
 # validators for credentials while login
 def invalid_credentials(form,field):
@@ -27,6 +28,8 @@ def invalid_mail(form,field):
 def invalid_password(form,field):
     password_entered = field.data # getting data from form
     password_re_entered = form.confirm_password.data
+    if not re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password_entered):# password should follow certain rules to be valid. These rules are coded in regular expressions
+        raise ValidationError("At least 8 characters, Must be restricted to, though does not specifically require any of: uppercase letters: A-Z, lowercase letters: a-z, numbers: 0-9 any of the special characters: @#$%^&+=")
     if password_entered != password_re_entered: # if password entered and password reentered don't match then invalid registration
         raise ValidationError("Passwords entered don't match")
 
