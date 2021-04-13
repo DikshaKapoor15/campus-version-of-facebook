@@ -114,39 +114,45 @@ def reset_password(token):
 @app.route('/home',methods=["POST","GET"])
 def home():
 
-    hform=HomeForm()
-    return render_template('home.html', form=hform)
+    hform=HomeForm() #loading of home form from forms.py
+    return render_template('home.html', form=hform) 
 
+#re-directed to homeSearch route by url present in ajax in home.html
 @app.route('/homeSearch',methods=["POST","GET"])
 def homeSearch():
-
-    #print("f2")
-    if request.method == "GET":
+  
+    if request.method == "GET": # if no tag is searched method is GET 
+        # query to select all posts in database ordered by post date  without images
         mycursor.execute("select distinct  p.full_name, po.date,po.post_description,po.tag1,po.tag2,po.tag3 from posts as po , profile as p where p.mail_id=po.mail_id order by po.date desc")
+        # query returns list of tuples containing fullname of the user(posted the post), post dated , post description , tags  of all posts
         data = mycursor.fetchall()
-        #print(data)
+        # query to select all posts in database ordered by post date  with images
         mycursor.execute("SELECT distinct p.id, pr.full_name, p.post_description, p.date, p.post_img, p.tag1, p.tag2, p.tag3 FROM postss as p, profile as pr where pr.mail_id = p.mail_id order by p.date desc")
+        # query returns list of tuples containing post id,fullname of the user(posted the post), post dated , post description , tags ,image of all posts
         data1 = mycursor.fetchall()
-        #print(data1)
-        data1 = [list(x) for x in data1]
-        imgs = [b64encode(x[4]) for x in data1]
-        imgs = [x.decode('utf-8') for x in imgs]
+        data1 = [list(x) for x in data1] # converting tuples to lists
+        imgs = [b64encode(x[4]) for x in data1] # encoding binary image data into ascii strings using base46 library
+        imgs = [x.decode('utf-8') for x in imgs] # decoding to binary data to view image
         for i in range(len(data1)):
-            data1[i][4]=imgs[i]
-        return jsonify({"htmlresponse": render_template('response.html', data1=data1, data = data )})
-    elif request.method == "POST":
-        x=request.form['tag']
+            data1[i][4]=imgs[i]  # replacing image with view able image
+        return jsonify({"htmlresponse": render_template('response.html', data1=data1, data = data )}) # response.html consists of post templates and data is passed to th html page for viewing.
+    
+    elif request.method == "POST": # if any tag is searched
+        x=request.form['tag']      # tag searched is saved in variable x and data is requested from ajax function in home.html
+        # query to select all posts related to tag from database ordered by post date  without images
         mycursor.execute(" select distinct  p.full_name, po.date,po.post_description,po.tag1,po.tag2,po.tag3 from posts as po , profile as p where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}') order by date desc".format(str(x)))
+         # query returns list of tuples containing fullname of the user(posted the post), post dated , post description , tags  of all posts
         data=mycursor.fetchall()
+        # query to select all posts related to tag from database ordered by post date  with images
         mycursor.execute(" select distinct po.id, p.full_name, po.post_description,po.date,po.post_img,po.tag1,po.tag2,po.tag3 from postss as po , profile as p where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}')  order by date desc".format(str(x)))
+        # query returns list of tuples containing post id,fullname of the user(posted the post), post dated , post description , tags ,image of all posts
         data1 = mycursor.fetchall()
-        data1 = [list(x) for x in data1]
-        imgs = [b64encode(x[4]) for x in data1]
-        imgs = [x.decode('utf-8') for x in imgs]
+        data1 = [list(x) for x in data1] # converting tuples to lists
+        imgs = [b64encode(x[4]) for x in data1] # encoding binary image data into ascii strings using base46 library
+        imgs = [x.decode('utf-8') for x in imgs] # decoding to binary data to view image
         for i in range(len(data1)):
-            data1[i][4] = imgs[i]
-        print(data1)
-        return jsonify({"htmlresponse": render_template('response.html',data=data, data1 =data1)})
+            data1[i][4] = imgs[i]    # replacing image with view able image
+        return jsonify({"htmlresponse": render_template('response.html',data=data, data1 =data1)})# response.html consists of post templates and data is passed to th html page for viewing.
     return jsonify({"error":"500 400 401"})
 
 @app.route('/create_post', methods = ['GET','POST'])
@@ -161,22 +167,21 @@ def create_post():
 
 @app.route('/calendar',methods=["GET","POST"])
 def calendar():
+    # selecting all the event data form database
     mycursor.execute("select * from events order by id")
     data= mycursor.fetchall()
-    timedate1 =[datetime.datetime.combine(x[2],x[4]) for x in data ]
-    timedate2 = [datetime.datetime.combine(x[3],x[5]) for x in data]
-  #  print(timedate1,timedate2,sep="\n")
-    data = [list(x) for x in data]
-   # print(data)
+    timedate1 =[datetime.datetime.combine(x[2],x[4]) for x in data ] # combining the start date and time of every event
+    timedate2 = [datetime.datetime.combine(x[3],x[5]) for x in data]  # combining the end date and time of every event
+    data = [list(x) for x in data] # converting tuples into lists
     for i in range(len(data)):
-        data[i].pop()
-        data[i].pop()
-        data[i].pop()
-        data[i].pop()
-        data[i].append(timedate1[i])
-        data[i].append(timedate2[i])
-    print(data)
-    return render_template("calendar1.html",data=data)
+        data[i].pop() # poping the end time
+        data[i].pop() # poping start time
+        data[i].pop() # poping end date
+        data[i].pop() # poping the start date
+        data[i].append(timedate1[i]) # appending the combined start date and time event.
+        data[i].append(timedate2[i]) # appending the combined end date and time of an event.
+
+    return render_template("calendar1.html",data=data) 
 
 # logout route
 @app.route("/logout", methods=['GET'])
