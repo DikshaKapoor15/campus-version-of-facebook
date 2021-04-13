@@ -92,33 +92,40 @@ def reset_password_request():
         if user:
             print("user found")
             send_password_reset_email(user)      #if user is found, invoke send_password function defined in models corr to the user mail
-        flash('Check your email for the instructions to reset your password')
+        # flash('Check your email for the instructions to reset your password')
         return redirect(url_for('login'))        #redirect to login page
     return render_template('reset_password_request.html',
                            title='Reset Password', form=form)
 
 
-
+#when the user clicks on the password reset link , a second route associated with password reset is triggered
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+    #retreiving the user by invoking verify_reset_token_method
     idRec = Credentials.verify_reset_password_token(token)
-    print("heyyyyyyappplication""", idRec)
-    # if not user:
-    #     return redirect(url_for('login'))
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        user = Credentials.query.filter_by(mail_id=idRec).first()
-        print("heyy after reset password", user.id)
-        print("heyy before reset password", user.password)
-        user.password=form.password.data
 
+    # if not user:
+    #     return redirect(url_for('login'))    #to be checked not required yet
+
+    #if token is valid the user is presented with aform to reset password
+    form = ResetPasswordForm()
+    # if form details are valid
+    if form.validate_on_submit():
+        user = Credentials.query.filter_by(mail_id=idRec).first()  #fetch the user from database for updation
+        print("heyy after reset password", user.password)
+        print("heyy before reset password", user.password)  ##for personal convenience
+
+        user.password=form.password.data  #reseting the users password to one retreived from form
+
+        #update query
         mycursor.execute("UPDATE credentials SET password = '{password}' WHERE mail_id = '{mail}' ".format(password = str(user.password), mail =  str(idRec)))
         connection.commit()
-        # user1 = Credentials.query.filter_by(mail_id=idRec).first()
+
         print("heyy after reset password in database", user.password)
         #flash('Your password has been reset.')
-        return redirect(url_for('login'))
-    return render_template('reset_password.html', form=form)
+        return redirect(url_for('login'))       #finally redirect to login page
+
+    return render_template('reset_password.html', form=form)    #rendering corresponding template with password reset form
 
 @app.route('/home',methods=["POST","GET"])
 def home():
