@@ -29,10 +29,10 @@ ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 login = LoginManager(app)
 login.init_app(app)
 
-##mail section to be checked
+
 mail= Mail(app)
 
-# mail details from which mail to be sent
+# configuring the mail details from which mail is to be sent
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USERNAME'] = 'developmentsoftware305@gmail.com'
@@ -75,20 +75,29 @@ def login():
                 return redirect(url_for('login')) # redirect to login after successful registration
     return render_template("login.html", form1 = login_form, form = reg_form) # if the method is post then return the login form
 
+
+
+#reset password route, to retreive the mail id and send mail to the same
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
+    #if the user is logged in, then there is no need of reset password functionality,so redirected to home page
     if current_user.is_authenticated:
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
+
+    #form to retreive the email_id, falls under reset_password_request.html
     form = ResetPasswordRequestForm()
+    #if form details are valid
     if form.validate_on_submit():
-        user = Credentials.query.filter_by(mail_id=form.email.data).first()
+        user = Credentials.query.filter_by(mail_id=form.email.data).first()  #check if the given id is registered in db or not
         if user:
             print("user found")
-            send_password_reset_email(user)
-        #flash('Check your email for the instructions to reset your password')
-        return redirect(url_for('login'))
+            send_password_reset_email(user)      #if user is found, invoke send_password function defined in models corr to the user mail
+        flash('Check your email for the instructions to reset your password')
+        return redirect(url_for('login'))        #redirect to login page
     return render_template('reset_password_request.html',
                            title='Reset Password', form=form)
+
+
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
