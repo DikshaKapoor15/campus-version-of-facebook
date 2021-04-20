@@ -6,10 +6,12 @@
 </head>
 <body>
       {% for d in data%}
-      <p> {{ d[1] }}          {{d[3]}}</br>
+      <p> {{ d[0] }}          {{d[1]}}</br>
+          {% if d[4] %}
           <img  src="data:image/jpeg;base64,{{ d[4] }}"/></br>
+          {% endif %}
           caption : {{ d[2] }} </br>
-          tags: {{d[5]}}  {{d[6]}} {{d[7]}}
+          tags: {{d[3]}}  {{d[5]}} {{d[6]}}
       </p>
             </br>
         {% endfor %}

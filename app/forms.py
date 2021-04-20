@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, DateField  ,SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, DateField  ,SelectField,TimeField
 from wtforms.validators import InputRequired, ValidationError
 from flask_wtf.file import FileField, FileRequired
 from app.models import *
@@ -46,9 +46,9 @@ class RegistrationForm(FlaskForm):
 class PosttForm(FlaskForm):
     post_description = StringField('caption')
     post_img = FileField("upload")
-    tag1 = StringField("tag1",validators=[InputRequired()])
-    tag2 = StringField("tag2")
-    tag3 = StringField("tag3")
+    tag1 = SelectField("tag1", coerce=int, validators=[InputRequired()],default=None)
+    tag2 = SelectField("tag2", coerce=int,default=None)
+    tag3 = SelectField("tag3", coerce=int,default=None)
     date = DateField("date",format='%Y-%m-%d')
 
     def __init__(self, *args, **kwargs):
@@ -56,19 +56,27 @@ class PosttForm(FlaskForm):
         if not self.date.data:
             self.date.data = datetime.date.today()
 
-class PostForm(FlaskForm):
-    mail_id = StringField('mail_id')
-    post_date = DateField(format='%Y-%m-%d')
-    post_description = StringField('post_description')
-    tag1 = StringField('tag1')
-    tag2 = StringField('tag2')
-    tag3 = StringField('tag3')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not self.post_date.data:
-            self.post_date.data = datetime.date.today()
 
 
 class HomeForm(FlaskForm):
-    tag_search = StringField('enter the tag : ')
+    tag_search = SelectField('enter the tag : ',coerce=int,validators=[InputRequired()])
+
+class UpdateYourAccountForm(FlaskForm):
+    mail_id = StringField('mail_id')  #validators=[invalid_mail,InputRequired(message="Mail already exists")], check this
+    full_name = StringField('full_name')
+    year = IntegerField('year')
+    department = StringField('department')
+    degree = StringField('degree')
+    image_file = FileField("upload")
+    submit = SubmitField('Update')
+
+
+class EventForm(FlaskForm):
+    title = StringField("Title",validators=[InputRequired()])
+    description = StringField("Description",validators=[InputRequired()])
+    venue      = StringField("Venue",validators=[InputRequired()])
+    sdate     = DateField("Start Date",format='%Y-%m-%d',validators=[InputRequired()])
+    stime     = TimeField("Start Time", format="%H:%M",validators=[InputRequired()])
+    edate = DateField("End Date", format='%Y-%m-%d',validators=[InputRequired()])
+    etime = TimeField("End Time", format="%H:%M",validators=[InputRequired()])
+    tag   = StringField("Tag",validators=[InputRequired()])

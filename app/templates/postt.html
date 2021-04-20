@@ -5,7 +5,7 @@
     <title>post</title>
 </head>
 <body>
-        <form method="post" action="{{ url_for('postt')}}" enctype="multipart/form-data">
+        <form method="post" action="{{ url_for('posts')}}" enctype="multipart/form-data">
           {{form.hidden_tag()}}
 
             {{form.post_img.label}}

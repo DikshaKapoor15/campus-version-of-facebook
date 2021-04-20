@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>events</title>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css" />
+      <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+</head>
+<body>
+<script>
+$(document).ready(function() {
+   var calendar = $('#calendar').fullCalendar({
+
+    header:{
+     left:'prev,next today',
+     center:'title',
+     right:'month,agendaWeek,agendaDay'
+    },
+    events : [{% for row in data %}{ id : '{{row[0]}}', title : '{{row[2]}}',description:'{{row[3]}}',venue:'{{row[4]}}',tag:'{{row[7]}}' ,start : '{{row[5]}}', end : '{{row[6]}}',},{% endfor %}],
+
+     eventClick: function(event) {
+
+
+              //  alert('Event: ' + event.title);
+                var start = $.fullCalendar.formatDate(event.start, "DD-MM-YY");
+                var start1 = $.fullCalendar.formatDate(event.start, "HH:mm");
+                var end = $.fullCalendar.formatDate(event.end, "DD-MM-YY");
+                var end1 = $.fullCalendar.formatDate(event.end, "HH:mm");
+               // console.log(start);
+          alert('Event: ' + event.title+'\n'+'Start: '+start+' at '+start1+'\nEnd: '+end+' at ' +end1);
+
+        //  alert('Event: ' + event.title+'\n'+'Start: '+start+'\nEnd: '+end);
+
+  },
+
+  });
+
+
+ });
+
+
+</script>
+<div  class="container">
+
+    <div id="calendar"></div>
+    <div>
+    <a href="addevent"><button type="button" class="btn btn-primary">Add Event</button>
+    </div>
+</div>
+</body>
+</html>
