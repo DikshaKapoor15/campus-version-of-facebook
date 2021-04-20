@@ -53,3 +53,23 @@ class Posts(db.Model):
     tag1 = db.Column(db.String(), nullable = False)
     tag2 = db.Column(db.String())
     tag3 = db.Column(db.String())
+
+class Postss(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mail_id = db.Column(db.String(25), unique=True, nullable=False)
+    date = db.Column(db.DateTime(timezone=False), nullable=False)
+    post_description = db.Column(db.String(),nullable=False)
+    tag1  = db.Column(db.String(),nullable=False)
+    tag2 = db.Column(db.String(),nullable=True)
+    tag3 = db.Column(db.String(),nullable=True)
+    post_img = db.Column(db.LargeBinary, nullable=False)
+
+    def __init__(self,mid,d,pd,t1,t2,t3,pi):
+        self.mail_id=mid
+        self.date = d
+        self.post_description =pd
+        self.tag1 =t1
+        self.tag2 = t2
+        self.tag3 =t3
+        self.post_img = pi
+        #print(pd,t1,t2,t3,sep=" ")

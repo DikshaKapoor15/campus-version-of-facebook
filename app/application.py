@@ -178,6 +178,44 @@ def create_post():
         db.session.commit() # adding data to posts table in database
         return "submited successfully"
     return render_template('post.html',form = post_form) # return post form if get method
+@app.route('/createPost')
+def createPost():
+    ptform = PosttForm()
+    mycursor.execute("select id,tag from eventags")
+    value = mycursor.fetchall()
+    value = [(x[0], x[1]) for x in value]
+    value = sorted(value)
+    ptform.tag1.choices = value
+    ptform.tag2.choices = value
+    ptform.tag3.choices = value
+    value = dict(value)
+    value[0] = ''
+    if request.method == "POST":
+        if ptform.validate_on_submit():
+            f = request.files['post_img']
+            mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag1.data))
+            connection.commit()
+            if ptform.tag2.data != 0:
+                mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag2.data))
+                connection.commit()
+            if ptform.tag3.data != 0:
+                mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag3.data))
+                connection.commit()
+            if f:
+                newPost = Postss(d=ptform.date.data, pd=ptform.post_description.data,
+                                 t1=value[ptform.tag1.data], t2=value[ptform.tag2.data], t3=value[ptform.tag3.data],
+                                 mid=current_user.mail_id
+                                 , pi=f.read())
+            else:
+                newPost = post(d=ptform.date.data, pd=ptform.post_description.data,
+                               t1=value[ptform.tag1.data], t2=value[ptform.tag2.data], t3=value[ptform.tag3.data],
+                               mid=current_user.mail_id
+                               , pi=f.read())
+
+            db.session.add(newPost)
+            db.session.commit()
+            return "uploaded successfully"
+    return render_template('createPost.html', form=ptform)
 
 @app.route('/calendar',methods=["GET","POST"])
 def calendar():
