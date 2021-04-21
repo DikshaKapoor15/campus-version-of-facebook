@@ -91,6 +91,16 @@ class ResetPasswordForm(FlaskForm):
         'Repeat Password', validators=[DataRequired(), EqualTo('password')]) #confirming the password2 and checking for match using EqualTo() validator
     submit = SubmitField('Request Password Reset')    #submit button field in the form
 
+    
+class EventForm(FlaskForm):
+    title = StringField("Title",validators=[InputRequired()])
+    description = StringField("Description",validators=[InputRequired()])
+    venue      = StringField("Venue",validators=[InputRequired()])
+    sdate     = DateField("Start Date",format='%Y-%m-%d',validators=[InputRequired()])
+    stime     = TimeField("Start Time", format="%H:%M",validators=[InputRequired()])
+    edate = DateField("End Date", format='%Y-%m-%d',validators=[InputRequired()])
+    etime = TimeField("End Time", format="%H:%M",validators=[InputRequired()])
+    tag   = StringField("Tag",validators=[InputRequired()])
 
 # input fields in search form
 class HomeForm(FlaskForm):

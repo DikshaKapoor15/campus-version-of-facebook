@@ -238,6 +238,29 @@ def calendar():
 
     return render_template("calendar1.html",data=data) # return calendar
 
+@app.route("/addevent", methods=['GET', 'POST'])
+def addevent():
+    eform = EventForm()
+    mycursor.execute("select tag from eventags")
+    value = mycursor.fetchall()
+    value = [x[0] for x in value]
+    if request.method == 'POST':
+
+        if eform.tag.data not in value:
+            x = 0
+            newtag = eventags(t=eform.tag.data, c=x)
+            db.session.add(newtag)
+            db.session.commit()
+
+        newevents = events(t=eform.title.data, d=eform.description.data, v=eform.venue.data, tag=eform.tag.data,
+                           sd=eform.sdate.data,
+                           st=eform.stime.data, ed=eform.edate.data, et=eform.etime.data, un=current_user.mail_id)
+        db.session.add(newevents)
+        db.session.commit()
+        return "success"
+    return render_template('event.html', form=eform)
+
+
 # logout route
 @app.route("/logout", methods=['GET'])
 def logout():

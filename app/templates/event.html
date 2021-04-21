@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/css/bootstrap-material-design.min.css"/>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/css/ripples.min.css"/>
+
+		<link rel="stylesheet" href="static/styles/bootstrap-material-datetimepicker.css" />
+		<link href='http://fonts.googleapis.com/css?family=Roboto:400,500' rel='stylesheet' type='text/css'>
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/js/ripples.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.5.10/js/material.min.js"></script>
+		<script type="text/javascript" src="https://rawgit.com/FezVrasta/bootstrap-material-design/master/dist/js/material.min.js"></script>
+		<script type="text/javascript" src="http://momentjs.com/downloads/moment-with-locales.min.js"></script>
+		<script type="text/javascript" src="static/javascript/bootstrap-material-datetimepicker.js"></script>
+</head>
+<body>
+
+
+
+                      <form method="post" action="#">
+                          {{form.csrf_token}}
+                          {{form.title.label}}
+                          {{form.title}}
+                      </br>
+                          {{form.description.label}}
+                          {{form.description}}
+                      </br>
+                          {{form.venue.label}}
+                          {{form.venue}}
+                      </br>
+                          {{form.hidden_tag()}}
+                          {{form.sdate.label}}
+                           {{form.sdate(type="text", placeholder="Select Date")}}
+                            </br>
+                          {{form.hidden_tag()}}
+                          {{form.stime.label}}
+                           {{form.stime(type="text", placeholder="Select Time")}}
+                          </br>
+                           {{form.hidden_tag()}}
+                           {{form.edate.label}}
+                           {{form.edate(type="text", placeholder="Select Date")}}
+                          </br>
+                          {{form.hidden_tag()}}
+                           {{form.etime.label}}
+                           {{form.etime(type="text", placeholder="Select Time")}}
+                          </br>
+                          {{form.tag.label}}
+                          {{form.tag}}
+                      </br>
+                          <input type="submit" value="Submit">
+					  </form>
+
+<script  type="text/javascript">
+    $(document).ready(function(){
+        $('#sdate').bootstrapMaterialDatePicker
+			({
+				time: false,
+				minDate : new Date(),
+				clearButton: true
+			});
+		$('#stime').bootstrapMaterialDatePicker
+			({
+				date: false,
+				clearButton: true,
+				format : 'HH:mm'
+
+			});
+			$('#edate').bootstrapMaterialDatePicker
+			({
+				time: false,
+				minDate : new Date(),
+				clearButton: true
+			});
+		$('#etime').bootstrapMaterialDatePicker
+			({
+				date: false,
+				clearButton: true,
+				format : 'HH:mm'
+
+			});
+		});
+	$.material.init()
+</script>
+</body>
+</html>

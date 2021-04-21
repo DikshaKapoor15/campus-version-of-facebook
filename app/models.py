@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from time import time
+from datetime import date
 import json
 import jwt
 from app import app
@@ -73,3 +74,36 @@ class Postss(db.Model):
         self.tag3 =t3
         self.post_img = pi
         #print(pd,t1,t2,t3,sep=" ")
+
+class events(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(), nullable=False)
+    title = db.Column(db.String(), nullable=False)
+    description = db.Column(db.String(), nullable=False)
+    venue = db.Column(db.String(), nullable=False)
+    tag = db.Column(db.String(), nullable=False)
+    sdate = db.Column(db.DateTime(timezone=False),nullable=False)
+    stime = db.Column(db.DateTime(),nullable=False)
+    edate = db.Column(db.DateTime(timezone=False))
+    etime = db.Column(db.DateTime())
+
+    def __init__(self,un,t,d,v,tag,sd,st,ed,et):
+        self.username=un
+        self.title=t
+        self.description=d
+        self.venue=v
+        self.tag=tag
+        self.sdate=sd
+        self.stime=st
+        self.edate=ed
+        self.etime=et
+
+
+class eventags(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    tag = db.Column(db.String(), nullable=False)
+    count = db.Column(db.Integer,nullable=False)
+
+    def __init__(self,t,c):
+        self.tag=t
+        self.count=c
