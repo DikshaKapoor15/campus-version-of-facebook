@@ -220,23 +220,38 @@ def posts():
     return render_template('postt.html', form=ptform)
 
 
-@app.route('/calendar',methods=["GET","POST"])
-def calendar():
-    # selecting all the event data form database
-    mycursor.execute("select * from events order by id")
-    data= mycursor.fetchall()
-    timedate1 =[datetime.datetime.combine(x[2],x[4]) for x in data ] # combining the start date and time of every event
-    timedate2 = [datetime.datetime.combine(x[3],x[5]) for x in data]  # combining the end date and time of every event
-    data = [list(x) for x in data] # converting tuples into lists
-    for i in range(len(data)):
-        data[i].pop() # poping the end time
-        data[i].pop() # poping start time
-        data[i].pop() # poping end date
-        data[i].pop() # poping the start date
-        data[i].append(timedate1[i]) # appending the combined start date and time event.
-        data[i].append(timedate2[i]) # appending the combined end date and time of an event.
+# @app.route('/calendar',methods=["GET","POST"])
+# def calendar():
+#     # selecting all the event data form database
+#     mycursor.execute("select * from events order by id")
+#     data= mycursor.fetchall()
+#     timedate1 =[datetime.datetime.combine(x[2],x[4]) for x in data ] # combining the start date and time of every event
+#     timedate2 = [datetime.datetime.combine(x[3],x[5]) for x in data]  # combining the end date and time of every event
+#     data = [list(x) for x in data] # converting tuples into lists
+#     for i in range(len(data)):
+#         data[i].pop() # poping the end time
+#         data[i].pop() # poping start time
+#         data[i].pop() # poping end date
+#         data[i].pop() # poping the start date
+#         data[i].append(timedate1[i]) # appending the combined start date and time event.
+#         data[i].append(timedate2[i]) # appending the combined end date and time of an event.
 
-    return render_template("calendar1.html",data=data) # return calendar
+#     return render_template("calendar1.html",data=data) # return calendar
+
+@app.route('/calendar', methods=["GET", "POST"])
+def calendar():
+    mycursor.execute("select * from events order by id")
+    data = mycursor.fetchall()
+    timedate1 = [datetime.datetime.combine(x[5], x[6]) for x in data]
+    timedate2 = [datetime.datetime.combine(x[7], x[8]) for x in data]
+    data = [list(x) for x in data]
+
+    for i in range(len(data)):
+        data[i][5] = timedate1[i]
+        data[i][6] = timedate2[i]
+
+    return render_template("calendar1.html", data=data)
+
 
 @app.route("/addevent", methods=['GET', 'POST'])
 def addevent():
