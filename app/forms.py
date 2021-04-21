@@ -51,32 +51,6 @@ class RegistrationForm(FlaskForm):
     degree = StringField('degree')
 
 
-# input fields in post form
-class PostForm(FlaskForm):
-    mail_id = StringField('mail_id')
-    post_date = DateField(format='%Y-%m-%d') # date format YYYY-MM-DD
-    post_description = StringField('post_description')  # post description or caption
-    tag1 = StringField('tag1',validators=[DataRequired()]) # tag related to the event (must tag)
-    tag2 = StringField('tag2') # tag related to the event (optional)
-    tag3 = StringField('tag3') # tag related to the event(optional)
-
-    def __init__(self, *args, **kwargs):
-        super(PostForm,self).__init__(*args, **kwargs)
-        if not self.post_date.data:
-            self.post_date.data = datetime.date.today() # current date is taken as posted date
-class PosttForm(FlaskForm):
-    post_description = StringField('caption')
-    post_img = FileField("upload")
-    tag1 = SelectField("tag1", coerce=int, validators=[InputRequired()],default=None)
-    tag2 = SelectField("tag2", coerce=int,default=None)
-    tag3 = SelectField("tag3", coerce=int,default=None)
-    date = DateField("date",format='%Y-%m-%d')
-
-    def __init__(self, *args, **kwargs):
-        super(PosttForm,self).__init__(*args, **kwargs)
-        if not self.date.data:
-            self.date.data = datetime.date.today()
-
 
 # input fields in reset password request form
 class ResetPasswordRequestForm(FlaskForm):
@@ -92,6 +66,26 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Request Password Reset')    #submit button field in the form
 
     
+class PosttForm(FlaskForm):
+    post_description = StringField('caption')
+    post_img = FileField("upload")
+    tag1 = SelectField("tag1", coerce=int, validators=[InputRequired()],default=None)
+    tag2 = SelectField("tag2", coerce=int,default=None)
+    tag3 = SelectField("tag3", coerce=int,default=None)
+    date = DateField("date",format='%Y-%m-%d')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.date.data:
+            self.date.data = datetime.date.today()
+
+
+
+class HomeForm(FlaskForm):
+    tag_search = SelectField('enter the tag : ',coerce=int,validators=[InputRequired()])
+
+
+
 class EventForm(FlaskForm):
     title = StringField("Title",validators=[InputRequired()])
     description = StringField("Description",validators=[InputRequired()])
@@ -101,8 +95,4 @@ class EventForm(FlaskForm):
     edate = DateField("End Date", format='%Y-%m-%d',validators=[InputRequired()])
     etime = TimeField("End Time", format="%H:%M",validators=[InputRequired()])
     tag   = StringField("Tag",validators=[InputRequired()])
-
-# input fields in search form
-class HomeForm(FlaskForm):
-    tag_search = StringField('tag_search')
-
+    color = SelectField("Colour",choices=[('#4fbd0a',' green'),('#082b96 ','blue'),('#4a0896 ','violet'),('#96087e ','purple'),('#960833',' pink'),('#960808 ','maroon'),('#bd5a0a','brown'),('#089669 ','navygreen'),('#086e96',' navyblue')])

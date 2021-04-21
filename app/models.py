@@ -50,15 +50,6 @@ class Tags(db.Model):
     date = db.Column(db.DateTime(timezone=False), nullable=False)
 
 # attributes in the posts table
-class Posts(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    mail_id = db.Column(db.String(25), nullable = False)
-    date = db.Column(db.DateTime(timezone=False), nullable=False)
-    post_description =db.Column(db.String(), nullable = False)
-    tag1 = db.Column(db.String(), nullable = False)
-    tag2 = db.Column(db.String())
-    tag3 = db.Column(db.String())
-
 class Postss(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mail_id = db.Column(db.String(25), unique=True, nullable=False)
@@ -79,6 +70,25 @@ class Postss(db.Model):
         self.post_img = pi
         #print(pd,t1,t2,t3,sep=" ")
 
+class post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mail_id = db.Column(db.String(25), unique=True, nullable=False)
+    date = db.Column(db.DateTime(timezone=False), nullable=False)
+    post_description = db.Column(db.String(), nullable=False)
+    tag1 = db.Column(db.String(), nullable=False)
+    tag2 = db.Column(db.String(), nullable=True)
+    tag3 = db.Column(db.String(), nullable=True)
+    post_img = db.Column(db.LargeBinary, nullable=True)
+
+    def __init__(self, mid, d, pd, t1, t2, t3, pi):
+        self.mail_id = mid
+        self.date = d
+        self.post_description = pd
+        self.tag1 = t1
+        self.tag2 = t2
+        self.tag3 = t3
+        self.post_img = pi
+
 class events(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(), nullable=False)
@@ -90,8 +100,9 @@ class events(db.Model):
     stime = db.Column(db.DateTime(),nullable=False)
     edate = db.Column(db.DateTime(timezone=False))
     etime = db.Column(db.DateTime())
+    color = db.Column(db.String(), nullable=False)
 
-    def __init__(self,un,t,d,v,tag,sd,st,ed,et):
+    def __init__(self,un,t,d,v,tag,sd,st,ed,et,c):
         self.username=un
         self.title=t
         self.description=d
@@ -101,7 +112,7 @@ class events(db.Model):
         self.stime=st
         self.edate=ed
         self.etime=et
-
+        self.color=c
 
 class eventags(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -111,3 +122,4 @@ class eventags(db.Model):
     def __init__(self,t,c):
         self.tag=t
         self.count=c
+

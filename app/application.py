@@ -10,6 +10,7 @@ from app.email import *
 from itsdangerous import URLSafeTimedSerializer ##to be checked
 from flask_bootstrap import Bootstrap
 import datetime
+import base64
 
 # creating engine
 engine = create_engine('postgres://odebgxxluzxqto:02911cc1fe5c97f0916d6a05760b41704668ab6013b712674a3b677f127ac1db@ec2-54-205-183-19.compute-1.amazonaws.com:5432/db0511lmef59sk')
@@ -129,57 +130,76 @@ def reset_password(token):
 
     return render_template('reset_password.html', form=form)    #rendering corresponding template with password reset form
 
-@app.route('/home',methods=["POST","GET"])
+@app.route('/home', methods=["POST", "GET"])
 def home():
-    hform=HomeForm() #loading of home form from forms.py
-    return render_template('home.html', form=hform) 
+    hform = HomeForm()
+    mycursor.execute("select id,tag from eventags")
+    value = mycursor.fetchall()
+    value = [(x[0], x[1]) for x in value]
+    value = sorted(value)
+    hform.tag_search.choices = value
+    return render_template('home.html', form=hform)
 
-#re-directed to homeSearch route by url present in ajax in home.html
-@app.route('/homeSearch',methods=["POST","GET"])
-def homeSearch():  
-    if request.method == "GET": # if no tag is searched method is GET 
-        # query to select all posts in database ordered by post date  without images
-        mycursor.execute("select distinct  p.full_name, po.date,po.post_description,po.tag1,po.tag2,po.tag3 from posts as po , profile as p where p.mail_id=po.mail_id order by po.date desc")
-        # query returns list of tuples containing fullname of the user(posted the post), post dated , post description , tags  of all posts
+
+@app.route('/homeSearch', methods=["POST", "GET"])
+def homeSearch():
+    mycursor.execute("select tag from eventags order by count desc")
+    trending = mycursor.fetchall()
+    trending = [x[0] for x in trending]
+    trending = trending[:3]
+
+    if request.method == "GET":
+        print("1111")
+        mycursor.execute( "select * from post order by date")
+        data1 = mycursor.fetchall()
+        print("2222")
+        mycursor.execute(  "select * from postss order by date")
         data = mycursor.fetchall()
-        # query to select all posts in database ordered by post date  with images
-        mycursor.execute("SELECT distinct p.id, pr.full_name, p.post_description, p.date, p.post_img, p.tag1, p.tag2, p.tag3 FROM postss as p, profile as pr where pr.mail_id = p.mail_id order by p.date desc")
-        # query returns list of tuples containing post id,fullname of the user(posted the post), post dated , post description , tags ,image of all posts
-        data1 = mycursor.fetchall()
-        data1 = [list(x) for x in data1] # converting tuples to lists
-        imgs = [b64encode(x[4]) for x in data1] # encoding binary image data into ascii strings using base46 library
-        imgs = [x.decode('utf-8') for x in imgs] # decoding to binary data to view image
-        for i in range(len(data1)):
-            data1[i][4]=imgs[i]  # replacing image with view able image
-        return jsonify({"htmlresponse": render_template('response.html', data1=data1, data = data )}) # response.html consists of post templates and data is passed to th html page for viewing.
-    
-    elif request.method == "POST": # if any tag is searched
-        x=request.form['tag']      # tag searched is saved in variable x and data is requested from ajax function in home.html
-        # query to select all posts related to tag from database ordered by post date  without images
-        mycursor.execute(" select distinct  p.full_name, po.date,po.post_description,po.tag1,po.tag2,po.tag3 from posts as po , profile as p where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}') order by date desc".format(str(x)))
-         # query returns list of tuples containing fullname of the user(posted the post), post dated , post description , tags  of all posts
-        data=mycursor.fetchall()
-        # query to select all posts related to tag from database ordered by post date  with images
-        mycursor.execute(" select distinct po.id, p.full_name, po.post_description,po.date,po.post_img,po.tag1,po.tag2,po.tag3 from postss as po , profile as p where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}')  order by date desc".format(str(x)))
-        # query returns list of tuples containing post id,fullname of the user(posted the post), post dated , post description , tags ,image of all posts
-        data1 = mycursor.fetchall()
-        data1 = [list(x) for x in data1] # converting tuples to lists
-        imgs = [b64encode(x[4]) for x in data1] # encoding binary image data into ascii strings using base46 library
-        imgs = [x.decode('utf-8') for x in imgs] # decoding to binary data to view image
-        for i in range(len(data1)):
-            data1[i][4] = imgs[i]    # replacing image with view able image
-        return jsonify({"htmlresponse": render_template('response.html',data=data, data1 =data1)})# response.html consists of post templates and data is passed to th html page for viewing.
-    return jsonify({"error":"500 400 401"})
+       # print(data)
+        data = [list(x) for x in data]
+        imgs = [base64.b64encode(x[4]) for x in data]
+        imgs = [x.decode('utf-8') for x in imgs]
 
-@app.route('/create_post', methods = ['GET','POST'])
-def create_post():
-    post_form = PostForm() # loading post form
-    if post_form.validate_on_submit(): # if validators on the form are true
-        newpost = Posts(mail_id = current_user.mail_id, date = post_form.post_date.data, post_description = post_form.post_description.data, tag1 = post_form.tag1.data, tag2 = post_form.tag2.data, tag3 = post_form.tag3.data ) # creating posts object
-        db.session.add(newpost)
-        db.session.commit() # adding data to posts table in database
-        return "submited successfully"
-    return render_template('post.html',form = post_form) # return post form if get method
+        for i in range(len(data)):
+            data[i][4] = imgs[i]
+        data.extend(data1)
+        data.sort(key=lambda x: x[3], reverse=True)
+      #  print(data1)
+
+        print(list([x[3] for x in data]))
+        return jsonify({"htmlresponse": render_template('response.html', data=data, trending=trending)})
+
+    elif request.method == "POST":
+        mycursor.execute("select id,tag from eventags")
+        tvalue = mycursor.fetchall()
+        tvalue = [(x[0], x[1]) for x in tvalue]
+        tvalue = dict(tvalue)
+        tvalue[0] = ''
+        x = request.form['tag']
+    #    print(x)
+        x = tvalue.get(int(x))
+     #   print(x)
+        if x:
+            mycursor.execute( " select * from postss where  tag1='{0}' or tag2='{0}' or tag3='{0}'".format( str(x)))
+            data = mycursor.fetchall()
+            mycursor.execute(  "  select * from post where  tag1='{0}' or tag2='{0}' or tag3='{0}' ".format( str(x)))
+            data1 = mycursor.fetchall()
+            data = [list(x) for x in data]
+            imgs = [base64.b64encode(x[4]) for x in data]
+            imgs = [x.decode('utf-8') for x in imgs]
+            for i in range(len(data)):
+                data[i][4] = imgs[i]
+            data.extend(data1)
+           # print(data)
+            data.sort(key=lambda x: x[3], reverse=True)
+            return jsonify({"htmlresponse": render_template('response.html', data=data, trending=trending)})
+
+        else:
+            return jsonify({"error": "Select a tag "})
+
+    return jsonify({"error": "error"})
+
+
 @app.route('/posts', methods=["POST", "GET"])
 def posts():
     ptform = PosttForm()
@@ -269,7 +289,8 @@ def addevent():
 
         newevents = events(t=eform.title.data, d=eform.description.data, v=eform.venue.data, tag=eform.tag.data,
                            sd=eform.sdate.data,
-                           st=eform.stime.data, ed=eform.edate.data, et=eform.etime.data, un=current_user.mail_id)
+                           st=eform.stime.data, ed=eform.edate.data, et=eform.etime.data, un=current_user.mail_id,
+                           c=eform.color.data)
         db.session.add(newevents)
         db.session.commit()
         return "success"

@@ -9,11 +9,12 @@
 <body>
     
 <!--     if there are any posts  this is executed -->
-{% if data1 %}
+{% if data %}
 <!--       for every post in the data -->
-      {% for d in data1 %}
+      {% for d in data %}
                             <div class="card" style="margin-left: 200px;" >
                                 <!-- <div class="post1"> -->
+                                {% if d[4] %}
                                     <img src="{{url_for('static', filename = 'assets/image1.jpeg')}}" alt="image is here"
                                         style=" border-radius: 50%; height: 60px ; width: 60px; padding:10px 10px ;"
                                         /><br>
@@ -21,7 +22,7 @@
                                     <img src="data:image/jpeg;base64,{{d[4]}}" alt="image is here"
                                         height="400" width="575" style="padding-top: 10px;"/><br><br>
 
-
+                                 {% endif %}
 
                                     <div id="post2text"  class="post1">
 <!--                                                                                                   d[1] is user full name -->
