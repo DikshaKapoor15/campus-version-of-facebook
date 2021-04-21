@@ -294,7 +294,7 @@ def addevent():
         db.session.add(newevents)
         db.session.commit()
         return "success"
-    return render_template('event.html', form=eform)
+    return render_template('test15.html', form=eform)
 
 
 # logout route
@@ -303,3 +303,6 @@ def logout():
     logout_user() # inbuilt function to logout user
     return redirect(url_for('login')) # redirect to login page
 
+# @app.route("/addNewevent", methods=['GET', 'POST'])
+# def addNewevent():
+#     return render_template("test15.html")
