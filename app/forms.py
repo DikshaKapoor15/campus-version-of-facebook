@@ -64,6 +64,18 @@ class PostForm(FlaskForm):
         super(PostForm,self).__init__(*args, **kwargs)
         if not self.post_date.data:
             self.post_date.data = datetime.date.today() # current date is taken as posted date
+class PosttForm(FlaskForm):
+    post_description = StringField('caption')
+    post_img = FileField("upload")
+    tag1 = SelectField("tag1", coerce=int, validators=[InputRequired()],default=None)
+    tag2 = SelectField("tag2", coerce=int,default=None)
+    tag3 = SelectField("tag3", coerce=int,default=None)
+    date = DateField("date",format='%Y-%m-%d')
+
+    def __init__(self, *args, **kwargs):
+        super(PosttForm,self).__init__(*args, **kwargs)
+        if not self.date.data:
+            self.date.data = datetime.date.today()
 
 
 # input fields in reset password request form
@@ -83,17 +95,4 @@ class ResetPasswordForm(FlaskForm):
 # input fields in search form
 class HomeForm(FlaskForm):
     tag_search = StringField('tag_search')
-
-class PosttForm(FlaskForm):
-    post_description = StringField('caption')
-    post_img = FileField("upload")
-    tag1 = SelectField("tag1", coerce=int, validators=[InputRequired()],default=None)
-    tag2 = SelectField("tag2", coerce=int,default=None)
-    tag3 = SelectField("tag3", coerce=int,default=None)
-    date = DateField("date",format='%Y-%m-%d')
-
-    def __init__(self, *args, **kwargs):
-        super(PosttForm,self).__init__(*args, **kwargs)
-        if not self.date.data:
-            self.date.data = datetime.date.today()
 

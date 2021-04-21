@@ -1,13 +1,15 @@
 from app import app
 from app.forms import *
 from app.models import *
-from flask import render_template, url_for, redirect,request, jsonify
+from flask import render_template, url_for, redirect,request, jsonify, Response
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from sqlalchemy import create_engine
 from flask_mail import Mail, Message  ##to be checked
 from base64 import b64encode
 from app.email import *
 from itsdangerous import URLSafeTimedSerializer ##to be checked
+from flask_bootstrap import Bootstrap
+import datetime
 
 # creating engine
 engine = create_engine('postgres://odebgxxluzxqto:02911cc1fe5c97f0916d6a05760b41704668ab6013b712674a3b677f127ac1db@ec2-54-205-183-19.compute-1.amazonaws.com:5432/db0511lmef59sk')
@@ -28,7 +30,7 @@ ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 login = LoginManager(app)
 login.init_app(app)
-
+Bootstrap(app)
 
 mail= Mail(app)
 
@@ -178,8 +180,8 @@ def create_post():
         db.session.commit() # adding data to posts table in database
         return "submited successfully"
     return render_template('post.html',form = post_form) # return post form if get method
-@app.route('/createPost')
-def createPost():
+@app.route('/posts', methods=["POST", "GET"])
+def posts():
     ptform = PosttForm()
     mycursor.execute("select id,tag from eventags")
     value = mycursor.fetchall()
@@ -215,7 +217,8 @@ def createPost():
             db.session.add(newPost)
             db.session.commit()
             return "uploaded successfully"
-    return render_template('createPost.html', form=ptform)
+    return render_template('postt.html', form=ptform)
+
 
 @app.route('/calendar',methods=["GET","POST"])
 def calendar():
