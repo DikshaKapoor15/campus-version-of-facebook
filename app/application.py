@@ -235,7 +235,7 @@ def posts():
 #         data[i].pop() # poping the start date
 #         data[i].append(timedate1[i]) # appending the combined start date and time event.
 #         data[i].append(timedate2[i]) # appending the combined end date and time of an event.
-
+#
 #     return render_template("calendar1.html",data=data) # return calendar
 
 @app.route('/calendar', methods=["GET", "POST"])

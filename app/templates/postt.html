@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -12,7 +12,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="{{ url_for('static',filename='styles/post_create.css') }}">
-        
+
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -100,10 +100,13 @@
                                           </br>
                                           {{form.tag1.label}}
                                           {{form.tag1}}
-                              
+                                       </br>
+                                    </br>
+                                    </br>
                                           {{form.tag2.label}}
                                           {{form.tag2}}
-                              
+                                    </br>
+                                    </br>
                                           {{form.tag3.label}}
                                           {{form.tag3}}
                                         </br>
