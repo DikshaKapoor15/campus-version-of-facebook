@@ -45,6 +45,10 @@ class Profile(db.Model):
     department = db.Column(db.String(), nullable= False)
     degree = db.Column(db.String(), nullable= False)
 
+class Tags(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime(timezone=False), nullable=False)
+
 # attributes in the posts table
 class Posts(db.Model):
     id = db.Column(db.Integer, primary_key = True)
