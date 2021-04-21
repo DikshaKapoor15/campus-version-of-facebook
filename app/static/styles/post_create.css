@@ -114,12 +114,12 @@ img {
   font-family: 'Roboto', sans-serif;
 } */
 body {
-  background: orange;
+  background: rgb(0, 183, 255);
   /* fallback for old browsers */
-  background: -webkit-linear-gradient(to top, #e78f54, #f88603);
-  background: -moz-linear-gradient(to top, #e78f54, #f88603);
-  background: -o-linear-gradient(to top,  #e78f54, #f88603);
-  background: linear-gradient(to top,  #e78f54, #f88603);
+  background: -webkit-linear-gradient(to top, #54e7cf, #03b3f8);
+  background: -moz-linear-gradient(to top, #54e7db, #0375f8);
+  background: -o-linear-gradient(to top,  #54bde7, #0382f8);
+  background: linear-gradient(to top,  #35a9df, #03e8f8);
   background-size: cover;
   background-attachment: fixed;
   font-family: 'Roboto', sans-serif;
@@ -214,9 +214,9 @@ input.email, input.text.w3lpass {
 input[type="submit"] {
   font-size: .9em;
   color: #fff;
-  background:rgb(252, 25, 9);
+  background:rgb(2, 2, 17);
   outline: none;
-  border: 1px solid rgb(247, 46, 11);
+  border: 1px solid rgb(49, 8, 1);
   cursor: pointer;
   padding: 0.9em;
   -webkit-appearance: none;
