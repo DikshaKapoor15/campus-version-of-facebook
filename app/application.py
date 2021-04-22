@@ -67,7 +67,7 @@ def login():
             if reg_form.validate_on_submit(): # if conditions specified in forms.py are satisfied
                 mail_id = reg_form.mail_id.data # get details from the form submitted
                 password = reg_form.password.data
-                cred = Credentials(mail_id=mail_id, password=generate_password_hash(password)) # create object for Credentials
+                cred = Credentials(mail_id=mail_id, password=generate_password_hash(password)) # create object for Credentials ## password is hashed here
                 prof = newprofile(mail_id=mail_id, full_name=reg_form.full_name.data, year=reg_form.year.data,
                                department=reg_form.department.data, degree=reg_form.degree.data) # create object for Profile
                 db.session.add(cred) # add the details to the Credentials table in database 
@@ -76,41 +76,51 @@ def login():
                 return redirect(url_for('login')) # redirect to login after successful registration
     return render_template("login.html", form1 = login_form, form = reg_form) # if the method is post then return the login form
 
+#reset password route, to retreive the mail id and send mail to the same
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
+#if the user is logged in, then there is no need of reset password functionality,so redirected to home page
     if current_user.is_authenticated:
-        return redirect(url_for('login'))
+        return redirect(url_for('home'))
+
+#form to retreive the email_id, falls under reset_password_request.html
     form = ResetPasswordRequestForm()
+        #if form details are valid
     if form.validate_on_submit():
-        user = Credentials.query.filter_by(mail_id=form.email.data).first()
+        user = Credentials.query.filter_by(mail_id=form.email.data).first()  #check if the given id is registered in db or not
         if user:
             print("user found")
-            send_password_reset_email(user)
+            send_password_reset_email(user) #if user is found, invoke send_password function defined in models corr to the user mail
         #flash('Check your email for the instructions to reset your password')
-        return redirect(url_for('login'))
+        return redirect(url_for('login'))   #redirect to login page
     return render_template('reset_password_request.html',
                            title='Reset Password', form=form)
 
+#when the user clicks on the password reset link , a second route associated with password reset is triggered
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+    #retreiving the user by invoking verify_reset_token_method
     idRec = Credentials.verify_reset_password_token(token)
     print("heyyyyyyappplication""", idRec)
     # if not user:
     #     return redirect(url_for('login'))
+    
+    #if token is valid the user is presented with aform to reset password    
     form = ResetPasswordForm()
+        # if form details are valid
     if form.validate_on_submit():
-        user = Credentials.query.filter_by(mail_id=idRec).first()
+        user = Credentials.query.filter_by(mail_id=idRec).first()  #fetch the user from database for updation
         print("heyy after reset password", user.id)
-        print("heyy before reset password", user.password)
-        user.password=generate_password_hash(form.password.data)
-
+        print("heyy before reset password", user.password)##for personal convenience
+        user.password=generate_password_hash(form.password.data) ## generate password hash ##reseting the users password to one retreived from form
+        
+        #update query
         mycursor.execute("UPDATE credentials SET password = '{password}' WHERE mail_id = '{mail}' ".format(password = str(user.password), mail =  str(idRec)))
         connection.commit()
-        # user1 = Credentials.query.filter_by(mail_id=idRec).first()
         print("heyy after reset password in database", user.password)
         #flash('Your password has been reset.')
-        return redirect(url_for('login'))
-    return render_template('reset_password.html', form=form)
+        return redirect(url_for('login'))   #finally redirect to login page
+    return render_template('reset_password.html', form=form)     #rendering corresponding template with password reset form
 
 @app.route('/home',methods=["POST","GET"])
 def home():
