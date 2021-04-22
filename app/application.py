@@ -132,7 +132,7 @@ def home():
     value = [(x[0], x[1]) for x in trending]          #list of tuples with id,tag 
     value = sorted(value)                             #sorted according to id's
     hform.tag_search.choices = value                  #this list is passed to HomeForm tag search for choices 
-    return render_template('home.html', form=hform,trending=trending) # rendering home page passing form and trending events data
+    return render_template('home.html', form=hform,trending=trending)   # rendering home page passing form and trending events data
 
 # it is routed to homeSearch by ajax present in Home.html
 @app.route('/homeSearch',methods=["POST","GET"])
