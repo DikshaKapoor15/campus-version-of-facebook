@@ -133,7 +133,7 @@ def home():
     value = [(x[0], x[1]) for x in trending]          #list of tuples with id,tag 
     value = sorted(value)                             #sorted according to id's
     hform.tag_search.choices = value                  #this list is passed to HomeForm tag search for choices 
-    return render_template('home.html', form=hform,trending=trending)
+    return render_template('home.html', form=hform,trending=trending) # rendering home page passing form and trending events data
 
 
 @app.route('/homeSearch',methods=["POST","GET"])
@@ -189,45 +189,45 @@ def homeSearch():
 
     return jsonify({"error": "error"})
 
-#route to create post
+#route to create post and routed to this page on clicking create post button
 @app.route('/create_post', methods = ['GET','POST'])
 def create_post():
-    ptform = PosttForm()
-    mycursor.execute("select id,tag from eventags")
+    ptform = PosttForm()              # form to create post
+    mycursor.execute("select id,tag from eventags") # fetching the event tags data order b count in descending order
     value = mycursor.fetchall()
-    value = [(x[0], x[1]) for x in value]
-    value = sorted(value)
-    ptform.tag1.choices = value
-    ptform.tag2.choices = value
-    ptform.tag3.choices = value
-    value = dict(value)
-    value[0] = ''
+    value = [(x[0], x[1]) for x in value]            #list of tuples with id,tag 
+    value = sorted(value)                            #sorted according to id's
+    ptform.tag1.choices = value                       #this list is passed to postForm tag1 choices for selction  
+    ptform.tag2.choices = value                       #this list is passed to postForm tag2 choices for selction
+    ptform.tag3.choices = value                        #this list is passed to postForm tag3 choices for selction  
+    value = dict(value)                              #converted it into dictionary
+    value[0] = ''                                   # that is selected no tag 
     if request.method == "POST":
         if ptform.validate_on_submit():
-            f = request.files['post_img']
-            mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag1.data))
+            f = request.files['post_img']           # storing image file in f     
+            mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag1.data)) # if tag is used in post counter is incremented of the coresponding tag
             connection.commit()
             if ptform.tag2.data != 0:
-                mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag2.data))
+                mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag2.data)) # if tag is used in post counter is incremented of the coresponding tag
                 connection.commit()
             if ptform.tag3.data != 0:
-                mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag3.data))
+                mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag3.data))# if tag is used in post counter is incremented of the coresponding tag
                 connection.commit()
             if f:
                 newPost = Postss(d=ptform.date.data, pd=ptform.post_description.data,
                                  t1=value[ptform.tag1.data], t2=value[ptform.tag2.data], t3=value[ptform.tag3.data],
                                  mid=current_user.mail_id
-                                 , pi=f.read())
+                                 , pi=f.read())    # if there is image in the created post it is stored in postss datatable
             else:
                 newPost = post(d=ptform.date.data, pd=ptform.post_description.data,
                                t1=value[ptform.tag1.data], t2=value[ptform.tag2.data], t3=value[ptform.tag3.data],
                                mid=current_user.mail_id
-                               , pi=f.read())
+                               , pi=f.read())         # if there is no image in the created post it is stored in post datatable
 
             db.session.add(newPost)
             db.session.commit()
             return "uploaded successfully"
-    return render_template('create_post.html', form=ptform)
+    return render_template('create_post.html', form=ptform) # rendering create_post and passing the post form 
 
 #route to like or dislike a post
 @app.route('/like/<int:post_id>/<action>')
@@ -278,28 +278,29 @@ def calendar():
 
     return render_template("calendar1.html", data=data)
 
+#route to create/add event and routed to this page on clicking create/add event button
 @app.route("/addevent", methods=['GET', 'POST'])
 def addevent():
-    eform = EventForm()
-    mycursor.execute("select tag from eventags")
+    eform = EventForm()                                        #form to create event
+    mycursor.execute("select tag from eventags")            #fetching event tags data 
     value = mycursor.fetchall()
-    value = [x[0] for x in value]
+    value = [x[0] for x in value]                          # creating list of tags    
     if request.method == 'POST':
 
-        if eform.tag.data not in value:
+        if eform.tag.data not in value:                     #tag given is not present in the tags collection  
             x = 0
-            newtag = eventags(t = eform.tag.data, c=x)
+            newtag = eventags(t = eform.tag.data, c=x)     #inserting this tag in evnetags data table with count 0
             db.session.add(newtag)
             db.session.commit()
 
         newevents = events(t=eform.title.data, d=eform.description.data, v=eform.venue.data, tag=eform.tag.data,
                            sd=eform.sdate.data,
                            st=eform.stime.data, ed=eform.edate.data, et=eform.etime.data, un=current_user.mail_id,
-                           c=eform.color.data)
+                           c=eform.color.data)   # event details are inserted into event data table
         db.session.add(newevents)
         db.session.commit()
         return "success"
-    return render_template('create_event.html', form=eform)
+    return render_template('create_event.html', form=eform) #rendering create_event and passing the form
 
 # logout route
 @app.route("/logout", methods=['GET'])
