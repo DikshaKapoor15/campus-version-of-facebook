@@ -101,17 +101,16 @@ def reset_password_request():
 def reset_password(token):
     #retreiving the user by invoking verify_reset_token_method
     idRec = Credentials.verify_reset_password_token(token)
-    print("heyyyyyyappplication""", idRec)
-    # if not user:
-    #     return redirect(url_for('login'))
+    print("heyappplication""", idRec) #for personal convenience
+
     
     #if token is valid the user is presented with aform to reset password    
     form = ResetPasswordForm()
         # if form details are valid
     if form.validate_on_submit():
         user = Credentials.query.filter_by(mail_id=idRec).first()  #fetch the user from database for updation
-        print("heyy after reset password", user.id)
-        print("heyy before reset password", user.password)##for personal convenience
+        print("heyy after reset password", form.password.data)
+        print("heyy before reset password", user.password)   ##for personal convenience
         user.password=generate_password_hash(form.password.data) ## generate password hash ##reseting the users password to one retreived from form
         
         #update query
