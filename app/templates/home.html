@@ -1,4 +1,12 @@
-<!-- This is the html page of home i.e the page that will be displayed agter some one logs in.  -->
+<!-- This is the html page of home i.e the page that will be displayed agter some one logs in. 
+The Home page has features of a side bar which can be toggled.
+The side navigation bar contains the different options one has i.e home , create post , create post, view calendar. These are the urls and when clicked , the desired 
+page  will open. 
+It also has a upper horizontal bar having search button for searching posts related to a tag options and  avatar icons which on clicking
+gives the option of updating profile and log out.
+The body contains four different card in the upper area . On these cards the trending events are dispalyed .
+Below the four cards , all posts are displayed with  their details.
+->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -62,7 +70,7 @@
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <!-- <a class="navbar-brand" href="index.html">Start Bootstrap</a> -->
+           
             <a class="navbar-brand" >Campus Facebook</a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
@@ -80,10 +88,11 @@
             <!-- Navbar-->
             <ul class="navbar-nav ml-auto ml-md-0">
                 <li class="nav-item dropdown">
+              <!-- Dropdown  -->
                     <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                         <a class="dropdown-item" href="#">Profile</a>
-                        <!-- <a class="dropdown-item" href="#">Activity Log</a> -->
+                       
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{url_for('logout')}}">Logout</a>
                     </div>
@@ -96,7 +105,7 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
 
-
+                              <!--    side Navigation Bar -->
                             <div class="sb-sidenav-menu-heading">Features</div>
                             <a class="nav-link" href="{{url_for('home')}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
@@ -119,13 +128,14 @@
 
                 </nav>
             </div>
+            
+<!--             Main Body  -->
             <div id="layoutSidenav_content">
                 <main>
+<!--                     Displays four card in the top area  -->
                     <div class="container-fluid">
                         <h1 class="mt-4">Trending </h1>
-                        <!-- <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Dashboard</li>
-                        </ol> -->
+                        
                         <div class="row">
                             <div class="col-xl-3 col-md-6">
                                 <div class="card bg-primary text-white mb-4">
