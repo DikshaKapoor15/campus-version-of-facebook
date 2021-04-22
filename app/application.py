@@ -125,11 +125,11 @@ def reset_password(token):
 @app.route('/home',methods=["POST","GET"])
 def home():
     mycursor.execute("select id,tag from eventags order by count desc") # fetching the event tags data order b count in descending order
-    trending = mycursor.fetchall()
-    trending = [x[1] for x in trending[:4]]           # made a list of tags 
+    trending1 = mycursor.fetchall()
+    trending = [x[1] for x in trending1[:4]]           # made a list of tags 
     trending = trending[:4]                           #gives top 4 trending tags
     hform = HomeForm()                                # form for searching tags
-    value = [(x[0], x[1]) for x in trending]          #list of tuples with id,tag 
+    value = [(x[0], x[1]) for x in trending1]          #list of tuples with id,tag 
     value = sorted(value)                             #sorted according to id's
     hform.tag_search.choices = value                  #this list is passed to HomeForm tag search for choices 
     return render_template('home.html', form=hform,trending=trending)   # rendering home page passing form and trending events data
