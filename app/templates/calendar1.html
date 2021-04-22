@@ -18,20 +18,20 @@
 
 
 $(document).ready(function() {
-   var calendar = $('#calendar').fullCalendar({
+   var calendar = $('#calendar').fullCalendar({    // calendar is displayed in<div> with id='calendar'
 
     header:{
-     left:'prev,next today',
-     center:'title',
-     right:'month,agendaWeek,agendaDay'
+     left:'prev,next today',                     // header consists of previous (day/week/month) ,next (day/week/month), today
+     center:'title',                            // month title
+     right:'month,agendaWeek,agendaDay'         // to view calendar in monthly format,weekly format ,day format 
     },
-    eventRender: function(eventObj, $el) {
-        $el.popover({
-          title: eventObj.title,
-          trigger: 'hover',
-          placement: 'top',
-          container: 'body',
-           content:  "Description : " + eventObj.description
+    eventRender: function(eventObj, $el) {     // this function is for hovering event details
+        $el.popover({                          
+          title: eventObj.title,               // heading - event title
+          trigger: 'hover',                        
+          placement: 'top',                   // hover placement
+          container: 'body',                         
+           content:  "Description : " + eventObj.description // content/body is event description
 
         });
       },
