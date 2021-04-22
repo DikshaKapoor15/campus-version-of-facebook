@@ -122,19 +122,17 @@ def reset_password(token):
         return redirect(url_for('login'))   #finally redirect to login page
     return render_template('reset_password.html', form=form)     #rendering corresponding template with password reset form
 
+#after successful login it is redirected to home route
 @app.route('/home',methods=["POST","GET"])
 def home():
-    mycursor.execute("select tag from eventags order by count desc")
+    mycursor.execute("select id,tag from eventags order by count desc") # fetching the event tags data order b count in descending order
     trending = mycursor.fetchall()
-    trending = [x[0] for x in trending]
-    trending = trending[:4]
-    print(trending)
-    hform = HomeForm()
-    mycursor.execute("select id,tag from eventags")
-    value = mycursor.fetchall()
-    value = [(x[0], x[1]) for x in value]
-    value = sorted(value)
-    hform.tag_search.choices = value
+    trending = [x[1] for x in trending[:4]]           # made a list of tags 
+    trending = trending[:4]                           #gives top 4 trending tags
+    hform = HomeForm()                                # form for searching tags
+    value = [(x[0], x[1]) for x in trending]          #list of tuples with id,tag 
+    value = sorted(value)                             #sorted according to id's
+    hform.tag_search.choices = value                  #this list is passed to HomeForm tag search for choices 
     return render_template('home.html', form=hform,trending=trending)
 
 
@@ -191,6 +189,7 @@ def homeSearch():
 
     return jsonify({"error": "error"})
 
+#route to create post
 @app.route('/create_post', methods = ['GET','POST'])
 def create_post():
     ptform = PosttForm()
