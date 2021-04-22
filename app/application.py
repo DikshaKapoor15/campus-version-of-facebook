@@ -101,17 +101,16 @@ def reset_password_request():
 def reset_password(token):
     #retreiving the user by invoking verify_reset_token_method
     idRec = Credentials.verify_reset_password_token(token)
-    print("heyyyyyyappplication""", idRec)
-    # if not user:
-    #     return redirect(url_for('login'))
+    print("heyappplication""", idRec) #for personal convenience
+
     
     #if token is valid the user is presented with aform to reset password    
     form = ResetPasswordForm()
         # if form details are valid
     if form.validate_on_submit():
         user = Credentials.query.filter_by(mail_id=idRec).first()  #fetch the user from database for updation
-        print("heyy after reset password", user.id)
-        print("heyy before reset password", user.password)##for personal convenience
+        print("heyy after reset password", form.password.data)
+        print("heyy before reset password", user.password)   ##for personal convenience
         user.password=generate_password_hash(form.password.data) ## generate password hash ##reseting the users password to one retreived from form
         
         #update query
@@ -122,196 +121,189 @@ def reset_password(token):
         return redirect(url_for('login'))   #finally redirect to login page
     return render_template('reset_password.html', form=form)     #rendering corresponding template with password reset form
 
+#after successful login it is redirected to home route
 @app.route('/home',methods=["POST","GET"])
 def home():
-    mycursor.execute("select tag from eventags order by count desc")
+    mycursor.execute("select id,tag from eventags order by count desc") # fetching the event tags data order b count in descending order
     trending = mycursor.fetchall()
-    trending = [x[0] for x in trending]
-    trending = trending[:4]
-    print(trending)
-    hform = HomeForm()
-    mycursor.execute("select id,tag from eventags")
-    value = mycursor.fetchall()
-    value = [(x[0], x[1]) for x in value]
-    value = sorted(value)
-    hform.tag_search.choices = value
-    return render_template('home.html', form=hform,trending=trending)
+    trending = [x[1] for x in trending[:4]]           # made a list of tags 
+    trending = trending[:4]                           #gives top 4 trending tags
+    hform = HomeForm()                                # form for searching tags
+    value = [(x[0], x[1]) for x in trending]          #list of tuples with id,tag 
+    value = sorted(value)                             #sorted according to id's
+    hform.tag_search.choices = value                  #this list is passed to HomeForm tag search for choices 
+    return render_template('home.html', form=hform,trending=trending) # rendering home page passing form and trending events data
 
-
-@app.route('/fetchdata',methods=["POST","GET"])
-def fetchdata():
-    if request.method=="POST":
-        id=request.form['id']
-        mycursor.execute("select * from events where events.tag = '{0}'".format(str(id)))
-        events = mycursor.fetchall()
-        print(id)
-    return jsonify({'htmlresponse':render_template('response1.html',event = events)})
-
-
+# it is routed to homeSearch by ajax present in Home.html
 @app.route('/homeSearch',methods=["POST","GET"])
 def homeSearch():
-    if request.method == "GET":
+    if request.method == "GET":            # method type is GET
         mycursor.execute(
             "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from post as po , newprofile as p where p.mail_id=po.mail_id order by date")
-        data1 = mycursor.fetchall()
+        data1 = mycursor.fetchall()         # date,description,tags username of the person posted of all posts with images are fetched from database
         mycursor.execute(
             "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from postss as po , newprofile as p where p.mail_id=po.mail_id order by date")
-        data = mycursor.fetchall()
-        data = [list(x) for x in data]
-        imgs = [base64.b64encode(x[4]) for x in data]
-        imgs = [x.decode('utf-8') for x in imgs]
+        data = mycursor.fetchall()          # date,description,tags username of the person posted of all posts with images are fetched from database
+        data = [list(x) for x in data]      # tuples are converted into lists 
+        imgs = [base64.b64encode(x[4]) for x in data]    # binary files are encoded(converted) to text form(readable) using base64 library
+        imgs = [x.decode('utf-8') for x in imgs]        # files are decoded to form can be displayed in html using base64      
 
         for i in range(len(data)):
-            data[i][4] = imgs[i]
-        data.extend(data1)
-        data.sort(key=lambda x: x[1], reverse=True)
+            data[i][4] = imgs[i]            # these images are replaced with the before ones
+        data.extend(data1)                  # data related to posts with image and without image are merged into one list
+        data.sort(key=lambda x: x[1], reverse=True)        # data is sorted according to the posted date
 
-        return jsonify({"htmlresponse": render_template('response.html', data=data)})
+        return jsonify({"htmlresponse": render_template('response.html', data=data)}) # this data are sent to response.html using htmlresponse in jsonify
 
     elif request.method == "POST":
-        mycursor.execute("select id,tag from eventags")
+        mycursor.execute("select id,tag from eventags") # fetching the event tags data order b count in descending order
         tvalue = mycursor.fetchall()
-        tvalue = [(x[0], x[1]) for x in tvalue]
-        tvalue = dict(tvalue)
-        tvalue[0] = ''
-        x = request.form['tag']
-        x = tvalue.get(int(x))
-        if x:
+        tvalue = [(x[0], x[1]) for x in tvalue]  #list of tuples with id,tag 
+        tvalue = dict(tvalue)          # converted them into dictionary
+        tvalue[0] = ''                 # no tag is selected gives 0 that is converted to empty string
+        x = request.form['tag']        # requesting the value of tag searched
+        x = tvalue.get(int(x))         # using dictionary getting the tag 
+        if x:                          # if tag is not a empty string 
             mycursor.execute(
                 " select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from postss as po , newprofile as p"
                 " where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}')  order by date".format(
-                    str(x)))
+                    str(x)))     # date,description,tags username of the person posted of the posts that related to tag searched with images are fetched from database
             data = mycursor.fetchall()
             mycursor.execute(
                 " select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from post as po , newprofile as p"
                 " where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}')  order by date".format(
-                    str(x)))
+                    str(x)))   # date,description,tags username of the person posted of the posts that related to tag searched without images are fetched from database
             data1 = mycursor.fetchall()
-            data = [list(x) for x in data]
-            imgs = [base64.b64encode(x[4]) for x in data]
-            imgs = [x.decode('utf-8') for x in imgs]
+            data = [list(x) for x in data]       # tuples are converted into lists 
+            imgs = [base64.b64encode(x[4]) for x in data]  # binary files are encoded(converted) to text form(readable) using base64 library
+            imgs = [x.decode('utf-8') for x in imgs]         # files are decoded to form can be displayed in html using base64      
             for i in range(len(data)):
-                data[i][4] = imgs[i]
-            data.extend(data1)
-            data.sort(key=lambda x: x[1], reverse=True)
-            return jsonify({"htmlresponse": render_template('response.html', data=data)})
+                data[i][4] = imgs[i]                       # these images are replaced with the before ones
+            data.extend(data1)                              # data related to posts with image and without image are merged into one list
+            data.sort(key=lambda x: x[1], reverse=True)        # data is sorted according to the posted date
+            return jsonify({"htmlresponse": render_template('response.html', data=data)}) # this data are sent to response.html using htmlresponse in jsonify
 
         else:
-            return jsonify({"error": "Select a tag "})
+            return jsonify({"error": "Select a tag "})     # this is returned when string is empty
 
     return jsonify({"error": "error"})
 
+#route to create post and routed to this page on clicking create post button
 @app.route('/create_post', methods = ['GET','POST'])
 def create_post():
-    ptform = PosttForm()
-    mycursor.execute("select id,tag from eventags")
+    ptform = PosttForm()              # form to create post
+    mycursor.execute("select id,tag from eventags") # fetching the event tags data order b count in descending order
     value = mycursor.fetchall()
-    value = [(x[0], x[1]) for x in value]
-    value = sorted(value)
-    ptform.tag1.choices = value
-    ptform.tag2.choices = value
-    ptform.tag3.choices = value
-    value = dict(value)
-    value[0] = ''
+    value = [(x[0], x[1]) for x in value]            #list of tuples with id,tag 
+    value = sorted(value)                            #sorted according to id's
+    ptform.tag1.choices = value                       #this list is passed to postForm tag1 choices for selction  
+    ptform.tag2.choices = value                       #this list is passed to postForm tag2 choices for selction
+    ptform.tag3.choices = value                        #this list is passed to postForm tag3 choices for selction  
+    value = dict(value)                              #converted it into dictionary
+    value[0] = ''                                   # that is selected no tag 
     if request.method == "POST":
         if ptform.validate_on_submit():
-            f = request.files['post_img']
-            mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag1.data))
+            f = request.files['post_img']           # storing image file in f     
+            mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag1.data)) # if tag is used in post counter is incremented of the coresponding tag
             connection.commit()
             if ptform.tag2.data != 0:
-                mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag2.data))
+                mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag2.data)) # if tag is used in post counter is incremented of the coresponding tag
                 connection.commit()
             if ptform.tag3.data != 0:
-                mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag3.data))
+                mycursor.execute("update eventags set count=count+1 where id='{0}'".format(ptform.tag3.data))# if tag is used in post counter is incremented of the coresponding tag
                 connection.commit()
             if f:
                 newPost = Postss(d=ptform.date.data, pd=ptform.post_description.data,
                                  t1=value[ptform.tag1.data], t2=value[ptform.tag2.data], t3=value[ptform.tag3.data],
                                  mid=current_user.mail_id
-                                 , pi=f.read())
+                                 , pi=f.read())    # if there is image in the created post it is stored in postss datatable
             else:
                 newPost = post(d=ptform.date.data, pd=ptform.post_description.data,
                                t1=value[ptform.tag1.data], t2=value[ptform.tag2.data], t3=value[ptform.tag3.data],
                                mid=current_user.mail_id
-                               , pi=f.read())
+                               , pi=f.read())         # if there is no image in the created post it is stored in post datatable
 
             db.session.add(newPost)
             db.session.commit()
             return "uploaded successfully"
-    return render_template('create_post.html', form=ptform)
+    return render_template('create_post.html', form=ptform) # rendering create_post and passing the post form 
 
+#route to like or dislike a post
 @app.route('/like/<int:post_id>/<action>')
 @login_required
-def like_action(post_id, action):
-    print(post_id)
-    if action == 'like':
-        current_user.like_post(post_id)
+def like_action(post_id, action):  
+   
+    if action == 'like': ## if the post is liked
+        current_user.like_post(post_id) ## call like_post in models to include the post in post_like table
 
-    if action == 'unlike':
-        current_user.unlike_post(post_id)
+    if action == 'unlike': ## if the post is disliked
+        current_user.unlike_post(post_id) ## call unlike_post in models to delete the post in post_like table
 
-    return redirect(request.referrer)
+    return redirect(request.referrer) ## return to the same page
 
-@app.route('/report/<int:post_id>/<action>')
+#route to report or take back report of a post and auto delete a post if many people reported 
+@app.route('/report/<int:post_id>/<action>') 
 @login_required
 def report_action(post_id, action):
     print(post_id)
-    if action == 'report':
-        current_user.report_post(post_id)
-        mycursor.execute("select id, user_id from post_report where post_id = {0} ".format(post_id))
-        reports = mycursor.fetchall()
-        reports = [x[0] for x in reports]
-        no_of_reports = len(reports)
-        print(no_of_reports)
-        if no_of_reports>1 :
-            mycursor.execute("delete from postss where id = {0}".format(post_id))
-            connection.commit()
-    if action == 'unreport':
-        current_user.unreport_post(post_id)
+    if action == 'report': ## if the post is reported
+        current_user.report_post(post_id) ## call report_post in models to include the post in post_report table
+        mycursor.execute("select id, user_id from post_report where post_id = {0} ".format(post_id)) ## fetching all users and ids  who reported the post
+        reports = mycursor.fetchall() 
+        reports = [x[0] for x in reports] ## getting users
+        no_of_reports = len(reports) ##counting number of users who reported the post
+        print(no_of_reports) 
+        if no_of_reports>1 : ## if no of reports crosses a threshold value
+            mycursor.execute("delete from postss where id = {0}".format(post_id)) ## delete the post if no of reports crosses a threshold value
+            connection.commit() ## commit the changes to database 
+    if action == 'unreport': ## if a report on post is  taken back
+        current_user.unreport_post(post_id) ## call unreport_post in models to delete the post in post_report table
 
-    return redirect(request.referrer)
+    return redirect(request.referrer)## return to the same page
 
 
 
 @app.route('/calendar', methods=["GET", "POST"])
 def calendar():
-    mycursor.execute("select * from events order by id")
+    mycursor.execute("select * from events order by id") # selecting all the event data form database
     data = mycursor.fetchall()
-    timedate1 = [datetime.datetime.combine(x[5], x[6]) for x in data]
-    timedate2 = [datetime.datetime.combine(x[7], x[8]) for x in data]
+    timedate1 = [datetime.datetime.combine(x[5], x[6]) for x in data] # combining the start date and time of every event
+    timedate2 = [datetime.datetime.combine(x[7], x[8]) for x in data] # combining the end date and time of every event
     data = [list(x) for x in data]
 
     for i in range(len(data)):
-        data[i][5] = timedate1[i]
-        data[i][6] = timedate2[i]
+        data[i][5] = timedate1[i] #replacing the value with combined start date and time event.
+        data[i][6] = timedate2[i] #replacing the value with  end date and time event.
 
     return render_template("calendar1.html", data=data)
 
+#route to create/add event and routed to this page on clicking create/add event button
 @app.route("/addevent", methods=['GET', 'POST'])
 def addevent():
-    eform = EventForm()
-    mycursor.execute("select tag from eventags")
+    eform = EventForm()                                        #form to create event
+    mycursor.execute("select tag from eventags")            #fetching event tags data 
     value = mycursor.fetchall()
-    value = [x[0] for x in value]
+    value = [x[0] for x in value]                          # creating list of tags    
     if request.method == 'POST':
 
-        if eform.tag.data not in value:
+        if eform.tag.data not in value:                     #tag given is not present in the tags collection  
             x = 0
-            newtag = eventags(t = eform.tag.data, c=x)
+            newtag = eventags(t = eform.tag.data, c=x)     #inserting this tag in evnetags data table with count 0
             db.session.add(newtag)
             db.session.commit()
 
         newevents = events(t=eform.title.data, d=eform.description.data, v=eform.venue.data, tag=eform.tag.data,
                            sd=eform.sdate.data,
                            st=eform.stime.data, ed=eform.edate.data, et=eform.etime.data, un=current_user.mail_id,
-                           c=eform.color.data)
+                           c=eform.color.data)   # event details are inserted into event data table
         db.session.add(newevents)
         db.session.commit()
         return "success"
-    return render_template('create_event.html', form=eform)
+    return render_template('create_event.html', form=eform) #rendering create_event and passing the form
 
+# logout route
 @app.route("/logout", methods=['GET'])
 @login_required
 def logout():
-    logout_user()
-    return redirect(url_for('login'))
+    logout_user()   # inbuilt function to logout user
+    return redirect(url_for('login')) # redirect to login page

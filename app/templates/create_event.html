@@ -1,3 +1,9 @@
+<!-- This is the html template of creating an event, this field is present in the side nav bar of the home page.
+Clicking on the createEvent option will render a form corresponding to adding an event.
+The form contains the input fields corresponding to add title, description, venue, start date, start time, end date, end time, and a tag, plus a color field,
+upon clicking submit and validating the dates and time, the event is added to successfully to the events table in the database, plus its displayed in the calendar,
+with its title pertaining to the event's date -->
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -38,11 +44,11 @@
         </style>
         
          <script>
-             $(function() {
+             $(function() { // this function is to minimum date that can be selected to create an event
               $(document).ready(function () {
-                  var date = new Date().toISOString().slice(0,10);
-                   $('#sdate').attr('min', date);
-                   $('#edate').attr('min', date);
+                  var date = new Date().toISOString().slice(0,10); // extract date from date and time output
+                   $('#sdate').attr('min', date);      // disabling the days that have passed
+                   $('#edate').attr('min', date);     // disabling the days that have passed     
               });
            });
         </script>

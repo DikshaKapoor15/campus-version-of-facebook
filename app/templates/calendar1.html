@@ -1,3 +1,6 @@
+
+<!-- This is the html of calendar page. -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,39 +21,38 @@
 
 
 $(document).ready(function() {
-   var calendar = $('#calendar').fullCalendar({
+   var calendar = $('#calendar').fullCalendar({    // calendar is displayed in<div> with id='calendar'
 
     header:{
-     left:'prev,next today',
-     center:'title',
-     right:'month,agendaWeek,agendaDay'
+     left:'prev,next today',                     // header consists of previous (day/week/month) ,next (day/week/month), today
+     center:'title',                            // month title
+     right:'month,agendaWeek,agendaDay'         // to view calendar in monthly format,weekly format ,day format 
     },
-    eventRender: function(eventObj, $el) {
-        $el.popover({
-          title: eventObj.title,
-          trigger: 'hover',
-          placement: 'top',
-          container: 'body',
-           content:  "Description : " + eventObj.description
+    eventRender: function(eventObj, $el) {     // this function is for hovering event details
+        $el.popover({                          
+          title: eventObj.title,               // heading - event title
+          trigger: 'hover',                        
+          placement: 'top',                   // hover placement
+          container: 'body',                         
+           content:  "Description : " + eventObj.description // content/body is event description
 
         });
       },
-    eventTextColor : 'white',
+    eventTextColor : 'white',                           // text colour of event in calendar
+     //event details  
     events : [{% for row in data %}{ id : '{{row[0]}}', title : '{{row[2]}}',description:'{{row[3]}}',venue:'{{row[4]}}',tag:'{{row[7]}}' ,start : '{{row[5]}}', end : '{{row[6]}}',backgroundColor:'{{row[10]}}',borderColor:'{{row[10]}}',},{% endfor %}],
 
-     eventClick: function(event) {
+     eventClick: function(event) {        // this function is to display event details on clicking the event 
 
-              //  alert('Event: ' + event.title);
+              
                 var start = $.fullCalendar.formatDate(event.start, "DD-MM-YY");
-
                 var start1 = $.fullCalendar.formatDate(event.start, "HH:mm");
                 var end = $.fullCalendar.formatDate(event.end, "DD-MM-YY");
                 var end1 = $.fullCalendar.formatDate(event.end, "HH:mm");
-               // console.log(start);
-          alert('Event: ' + event.title+ '\n Venue: ' + event.venue +  '\n'+'Start: '+start+' at '+start1+'\nEnd: '+end+' at ' +end1);
+         // alert box displays the details
+          alert('Event: ' + event.title+ '\n Venue: ' + event.venue +  '\n'+'Start: '+start+' at '+start1+'\nEnd: '+end+' at ' +end1); 
 
-        //  alert('Event: ' + event.title+'\n'+'Start: '+start+'\nEnd: '+end);
-  },
+         },
 
 
   });
@@ -72,6 +74,7 @@ $(document).ready(function() {
     <div id="calendar"></div>
     <div>
         <a href="addevent"><button type="button" class="btn btn-primary">Add Event</button></a>
+<!--         a button to route to add an event form -->
     </div>
 </div>
 </body>

@@ -1,3 +1,13 @@
+<!-- This is the code for html page of create post . This page has the side navigation and upper horixontal bar same as the home page .
+It contains the create post form . 
+The different options in the side navigation bar can be used to navigate through differnt functionaly of the website .
+The post form had options to upload an image (this is optional ) , description and atmost 3 tags ( one tag is mandatory)
+The tag field has a dropdown and the tags present in the dropdown can only be selected.
+The form has a submit button which on clicking will post would be created.
+The submit button on clicking changes the colour.
+-->
+
+
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
     <head>
@@ -7,6 +17,8 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>Facebook</title>
+        
+<!--         css and js files included  -->
         <link href="{{ url_for('static',filename='styles/home_style.css') }}" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -16,28 +28,24 @@
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <!-- <a class="navbar-brand" href="index.html">Start Bootstrap</a> -->
+           
             <a class="navbar-brand" >Campus Facebook</a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
             <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0"  method="POST"  action="{{ url_for('home')}}">
                 <div class="input-group">
-
-
-<!--                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />-->
-
-                    <div class="input-group-append">
-                        <!-- <input type="submit"  id ="btn" value="Search"> -->
+                     <div class="input-group-append">
+                       
                     </div>
                 </div>
             </form>
-            <!-- Navbar-->
+            <!-- Navbar-(upper Horizontal bar)-->
             <ul class="navbar-nav ml-auto ml-md-0">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                         <a class="dropdown-item" href="#">Profile</a>
-                        <!-- <a class="dropdown-item" href="#">Activity Log</a> -->
+                        
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{url_for('logout')}}">Logout</a>
                     </div>
@@ -45,6 +53,7 @@
             </ul>
         </nav>
         <div id="layoutSidenav">
+<!--             side Navigation Bar -->
             <div id="layoutSidenav_nav">
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
@@ -82,15 +91,7 @@
                             <h1>Post CREATE</h1>
                             <div class="main-agileinfo">
                                 <div class="agileits-top">
-                                    <!-- <form action="#" method="post">
-
-                        {{form.csrf_token}}
-                            {{form.post_description(placeholder = 'Post Description', type='text')}}
-                            {{form.tag1(placeholder = 'tag1', type='text')}}
-                            {{form.tag2(placeholder = 'tag2', type='text')}}
-                            {{form.tag3(placeholder = 'tag3', type='text')}}
-                            <input type="submit" name = "action" value="Register">
-                                    </form> -->
+<!--                                create post form required to fill in order to post      -->
                                     <form method="post" action="#" enctype="multipart/form-data">
                                         {{form.hidden_tag()}}
 
@@ -115,7 +116,8 @@
                                           {{form.tag3}}
                                         </br>
                                           </br>
-                                          <input type="submit" value="post">
+                        <!--           submit button                       -->
+                                          <input type="submit" value="post">   
                                       </form>
                                 </div>
                             </div>
@@ -130,6 +132,7 @@
 
             </div>
         </div>
+<!--  javascript file for the toggle button of side navigation -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="{{ url_for('static',filename='javascript/home_script.js') }}"></script>
 
