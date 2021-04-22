@@ -136,11 +136,9 @@ def fetchdata():
 @app.route('/homeSearch',methods=["POST","GET"])
 def homeSearch():
     if request.method == "GET":
-        print("1111")
         mycursor.execute(
             "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from post as po , newprofile as p where p.mail_id=po.mail_id order by date")
         data1 = mycursor.fetchall()
-        print("2222")
         mycursor.execute(
             "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from postss as po , newprofile as p where p.mail_id=po.mail_id order by date")
         data = mycursor.fetchall()
@@ -152,8 +150,7 @@ def homeSearch():
             data[i][4] = imgs[i]
         data.extend(data1)
         data.sort(key=lambda x: x[1], reverse=True)
-        print(data1)
-        print(list([x[1] for x in data]))
+
         return jsonify({"htmlresponse": render_template('response.html', data=data)})
 
     elif request.method == "POST":
