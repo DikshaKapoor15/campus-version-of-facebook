@@ -45,18 +45,19 @@ class RegistrationForm(FlaskForm):
     department = SelectField(label = 'department', choices = [('CSE','CSE'),('Electrical','Electrical'),('Maths and Computing','Maths and Computing'),('Mechanical','Mechanical'),('Civil','Civil'),('Chemical','Chemical'),('Metallurgy','Metallurgy')])
     degree = SelectField(label = 'degree', choices = [('B.Tech','B.Tech'),('M.Tech','M.Tech'),('M.Sc','M.Sc'),('PhD','PhD')])
 
+# form for creating posts    
 class PosttForm(FlaskForm):
-    post_description = StringField('caption')
-    post_img = FileField("upload")
-    tag1 = SelectField("tag1", coerce=int, validators=[InputRequired()],default=None)
-    tag2 = SelectField("tag2", coerce=int,default=None)
-    tag3 = SelectField("tag3", coerce=int,default=None)
-    date = DateField("date",format='%Y-%m-%d')
+    post_description = StringField('caption', validators=[InputRequired()]) #caption is required field
+    post_img = FileField("upload") # image is optional 
+    tag1 = SelectField("tag1", coerce=int, validators=[InputRequired()],default=None) # one tag is required field
+    tag2 = SelectField("tag2", coerce=int,default=None) # tag is optional
+    tag3 = SelectField("tag3", coerce=int,default=None) # tag is optional
+    date = DateField("date",format='%Y-%m-%d') # date
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.date.data:
-            self.date.data = datetime.date.today()
+            self.date.data = datetime.date.today() #
 
 
 class ResetPasswordRequestForm(FlaskForm):
