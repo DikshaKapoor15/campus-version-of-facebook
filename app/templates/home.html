@@ -23,30 +23,32 @@
         $(document).ready(function(){
 
              $.ajax({
-                url : "/homeSearch",
-                type : "GET",
+                url : "/homeSearch", // re-directed to the homeSearch route
+
+                type : "GET",    //  method type is GET (no tag is searched)  
                 success : function(data)
                     {
-                        $("#output").html(data);
-                         $("#output").append(data.htmlresponse);
+                        $("#output").html(data); //data is passed to  div with id='output' in this html page
+                         $("#output").append(data.htmlresponse); // data is sent to repsonse.html and response of response.html is displayed in div with id='output' 
                     } ,
                  error : function(error)
                  { console.log(error) ; }
              });
-            $("#btn").click(function(e){
-               alert("tttttt");
-               var tag = $("#tag_search").val();
-               console.log(tag);
+            
+            // search button with id='btn' is clicked
+            $("#btn").click(function(e){ 
+               var tag = $("#tag_search").val(); // tag searched is stored in the variable tag
+            
                $.ajax({
-                url : "/homeSearch",
-                type : "POST",
-                data : {"tag" : tag},
+                url : "/homeSearch",           // re-directed to the homeSearch route
+                type : "POST",                // tag is searched   
+                data : {"tag" : tag},           // tag data is sent to route with the variable name tag
                 success : function(data)
                     {
-                        alert("success");
-                        $("#output").html(data);
-                         $("#output").append(data.htmlresponse);
-                       console.log("response");
+                       
+                        $("#output").html(data);                    //data is passed to  div with id='output' in this html page 
+                         $("#output").append(data.htmlresponse);   // data is sent to repsonse.html and response of response.html is displayed in div with id='output'
+                      
                     },
                  error : function(error)
                  { console.log(error) ; }
