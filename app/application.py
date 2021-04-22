@@ -135,57 +135,57 @@ def home():
     hform.tag_search.choices = value                  #this list is passed to HomeForm tag search for choices 
     return render_template('home.html', form=hform,trending=trending) # rendering home page passing form and trending events data
 
-
+# it is routed to homeSearch by ajax present in Home.html
 @app.route('/homeSearch',methods=["POST","GET"])
 def homeSearch():
-    if request.method == "GET":
+    if request.method == "GET":            # method type is GET
         mycursor.execute(
             "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from post as po , newprofile as p where p.mail_id=po.mail_id order by date")
-        data1 = mycursor.fetchall()
+        data1 = mycursor.fetchall()         # date,description,tags username of the person posted of all posts with images are fetched from database
         mycursor.execute(
             "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from postss as po , newprofile as p where p.mail_id=po.mail_id order by date")
-        data = mycursor.fetchall()
-        data = [list(x) for x in data]
-        imgs = [base64.b64encode(x[4]) for x in data]
-        imgs = [x.decode('utf-8') for x in imgs]
+        data = mycursor.fetchall()          # date,description,tags username of the person posted of all posts with images are fetched from database
+        data = [list(x) for x in data]      # tuples are converted into lists 
+        imgs = [base64.b64encode(x[4]) for x in data]    # binary files are encoded(converted) to text form(readable) using base64 library
+        imgs = [x.decode('utf-8') for x in imgs]        # files are decoded to form can be displayed in html using base64      
 
         for i in range(len(data)):
-            data[i][4] = imgs[i]
-        data.extend(data1)
-        data.sort(key=lambda x: x[1], reverse=True)
+            data[i][4] = imgs[i]            # these images are replaced with the before ones
+        data.extend(data1)                  # data related to posts with image and without image are merged into one list
+        data.sort(key=lambda x: x[1], reverse=True)        # data is sorted according to the posted date
 
-        return jsonify({"htmlresponse": render_template('response.html', data=data)})
+        return jsonify({"htmlresponse": render_template('response.html', data=data)}) # this data are sent to response.html using htmlresponse in jsonify
 
     elif request.method == "POST":
-        mycursor.execute("select id,tag from eventags")
+        mycursor.execute("select id,tag from eventags") # fetching the event tags data order b count in descending order
         tvalue = mycursor.fetchall()
-        tvalue = [(x[0], x[1]) for x in tvalue]
-        tvalue = dict(tvalue)
-        tvalue[0] = ''
-        x = request.form['tag']
-        x = tvalue.get(int(x))
-        if x:
+        tvalue = [(x[0], x[1]) for x in tvalue]  #list of tuples with id,tag 
+        tvalue = dict(tvalue)          # converted them into dictionary
+        tvalue[0] = ''                 # no tag is selected gives 0 that is converted to empty string
+        x = request.form['tag']        # requesting the value of tag searched
+        x = tvalue.get(int(x))         # using dictionary getting the tag 
+        if x:                          # if tag is not a empty string 
             mycursor.execute(
                 " select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from postss as po , newprofile as p"
                 " where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}')  order by date".format(
-                    str(x)))
+                    str(x)))     # date,description,tags username of the person posted of the posts that related to tag searched with images are fetched from database
             data = mycursor.fetchall()
             mycursor.execute(
                 " select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from post as po , newprofile as p"
                 " where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}')  order by date".format(
-                    str(x)))
+                    str(x)))   # date,description,tags username of the person posted of the posts that related to tag searched without images are fetched from database
             data1 = mycursor.fetchall()
-            data = [list(x) for x in data]
-            imgs = [base64.b64encode(x[4]) for x in data]
-            imgs = [x.decode('utf-8') for x in imgs]
+            data = [list(x) for x in data]       # tuples are converted into lists 
+            imgs = [base64.b64encode(x[4]) for x in data]  # binary files are encoded(converted) to text form(readable) using base64 library
+            imgs = [x.decode('utf-8') for x in imgs]         # files are decoded to form can be displayed in html using base64      
             for i in range(len(data)):
-                data[i][4] = imgs[i]
-            data.extend(data1)
-            data.sort(key=lambda x: x[1], reverse=True)
-            return jsonify({"htmlresponse": render_template('response.html', data=data)})
+                data[i][4] = imgs[i]                       # these images are replaced with the before ones
+            data.extend(data1)                              # data related to posts with image and without image are merged into one list
+            data.sort(key=lambda x: x[1], reverse=True)        # data is sorted according to the posted date
+            return jsonify({"htmlresponse": render_template('response.html', data=data)}) # this data are sent to response.html using htmlresponse in jsonify
 
         else:
-            return jsonify({"error": "Select a tag "})
+            return jsonify({"error": "Select a tag "})     # this is returned when string is empty
 
     return jsonify({"error": "error"})
 
