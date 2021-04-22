@@ -35,22 +35,21 @@ $(document).ready(function() {
 
         });
       },
-    eventTextColor : 'white',
+    eventTextColor : 'white',                           // text colour of event in calendar
+     //event details  
     events : [{% for row in data %}{ id : '{{row[0]}}', title : '{{row[2]}}',description:'{{row[3]}}',venue:'{{row[4]}}',tag:'{{row[7]}}' ,start : '{{row[5]}}', end : '{{row[6]}}',backgroundColor:'{{row[10]}}',borderColor:'{{row[10]}}',},{% endfor %}],
 
-     eventClick: function(event) {
+     eventClick: function(event) {        // this function is to display event details on clicking the event 
 
-              //  alert('Event: ' + event.title);
+              
                 var start = $.fullCalendar.formatDate(event.start, "DD-MM-YY");
-
                 var start1 = $.fullCalendar.formatDate(event.start, "HH:mm");
                 var end = $.fullCalendar.formatDate(event.end, "DD-MM-YY");
                 var end1 = $.fullCalendar.formatDate(event.end, "HH:mm");
-               // console.log(start);
-          alert('Event: ' + event.title+ '\n Venue: ' + event.venue +  '\n'+'Start: '+start+' at '+start1+'\nEnd: '+end+' at ' +end1);
+         // alert box displays the details
+          alert('Event: ' + event.title+ '\n Venue: ' + event.venue +  '\n'+'Start: '+start+' at '+start1+'\nEnd: '+end+' at ' +end1); 
 
-        //  alert('Event: ' + event.title+'\n'+'Start: '+start+'\nEnd: '+end);
-  },
+         },
 
 
   });
@@ -72,6 +71,7 @@ $(document).ready(function() {
     <div id="calendar"></div>
     <div>
         <a href="addevent"><button type="button" class="btn btn-primary">Add Event</button></a>
+<!--         a button to route to add an event form -->
     </div>
 </div>
 </body>
