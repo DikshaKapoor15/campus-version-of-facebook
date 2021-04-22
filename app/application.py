@@ -10,24 +10,28 @@ from itsdangerous import URLSafeTimedSerializer
 from werkzeug.security import generate_password_hash,check_password_hash ## to hash password and validating entered password with the hash of password
 import base64 ## encode and decode images
 
-
+# creating engine
 engine = create_engine('postgres://odebgxxluzxqto:02911cc1fe5c97f0916d6a05760b41704668ab6013b712674a3b677f127ac1db@ec2-54-205-183-19.compute-1.amazonaws.com:5432/db0511lmef59sk')
+# connecting to database
 connection = engine.raw_connection()
+# creating a cursor
 mycursor = connection.cursor()
+# configuring database
 app.config[
     'SQLALCHEMY_DATABASE_URI'] = "postgres://odebgxxluzxqto:02911cc1fe5c97f0916d6a05760b41704668ab6013b712674a3b677f127ac1db@ec2-54-205-183-19.compute-1.amazonaws.com:5432/db0511lmef59sk"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+db = SQLAlchemy(app) ## instance of database
 ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 # session = db.session()
 # cursor = session.execute(sql).cursor
 
+
 login = LoginManager(app)
 login.init_app(app)
 
-##mail section to be checked
+# configuring the mail details from which mail is to be sent
 mail= Mail(app)
 
 app.config['MAIL_SERVER']='smtp.gmail.com'
@@ -38,7 +42,7 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
 
-
+#function for loading the user if logged in
 @login.user_loader
 def load_user(id):
     return Credentials.query.get(int(id))
