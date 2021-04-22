@@ -59,16 +59,17 @@ class PosttForm(FlaskForm):
         if not self.date.data:
             self.date.data = datetime.date.today() #the date need not be entered in the it will automatically takes today's date
 
-
+# input fields in reset password request form
 class ResetPasswordRequestForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired()])
-    submit = SubmitField('Request Password Reset')
+    email = StringField('Email', validators=[DataRequired()])  #only valid email-id are accepted
+    submit = SubmitField('Request Password Reset')   #submit button field in the form
 
+ # input fields in reset password form
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password',validators=[InputRequired(message = "Password mismatch"),invalid_password])
     password2 = PasswordField(
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Request Password Reset')
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])   #confirming the password2 and checking for match using EqualTo() validator
+    submit = SubmitField('Request Password Reset')  #submit button field in the form
 
 #form is to search tag in the home page    
 class HomeForm(FlaskForm):
