@@ -138,16 +138,6 @@ def home():
     return render_template('home.html', form=hform,trending=trending)
 
 
-@app.route('/fetchdata',methods=["POST","GET"])
-def fetchdata():
-    if request.method=="POST":
-        id=request.form['id']
-        mycursor.execute("select * from events where events.tag = '{0}'".format(str(id)))
-        events = mycursor.fetchall()
-        print(id)
-    return jsonify({'htmlresponse':render_template('response1.html',event = events)})
-
-
 @app.route('/homeSearch',methods=["POST","GET"])
 def homeSearch():
     if request.method == "GET":
@@ -240,36 +230,38 @@ def create_post():
             return "uploaded successfully"
     return render_template('create_post.html', form=ptform)
 
+#route to like or dislike a post
 @app.route('/like/<int:post_id>/<action>')
 @login_required
-def like_action(post_id, action):
-    print(post_id)
-    if action == 'like':
-        current_user.like_post(post_id)
+def like_action(post_id, action):  
+   
+    if action == 'like': ## if the post is liked
+        current_user.like_post(post_id) ## call like_post in models to include the post in post_like table
 
-    if action == 'unlike':
-        current_user.unlike_post(post_id)
+    if action == 'unlike': ## if the post is disliked
+        current_user.unlike_post(post_id) ## call unlike_post in models to delete the post in post_like table
 
-    return redirect(request.referrer)
+    return redirect(request.referrer) ## return to the same page
 
-@app.route('/report/<int:post_id>/<action>')
+#route to report or take back report of a post and auto delete a post if many people reported 
+@app.route('/report/<int:post_id>/<action>') 
 @login_required
 def report_action(post_id, action):
     print(post_id)
-    if action == 'report':
-        current_user.report_post(post_id)
-        mycursor.execute("select id, user_id from post_report where post_id = {0} ".format(post_id))
-        reports = mycursor.fetchall()
-        reports = [x[0] for x in reports]
-        no_of_reports = len(reports)
-        print(no_of_reports)
-        if no_of_reports>1 :
-            mycursor.execute("delete from postss where id = {0}".format(post_id))
-            connection.commit()
-    if action == 'unreport':
-        current_user.unreport_post(post_id)
+    if action == 'report': ## if the post is reported
+        current_user.report_post(post_id) ## call report_post in models to include the post in post_report table
+        mycursor.execute("select id, user_id from post_report where post_id = {0} ".format(post_id)) ## fetching all users and ids  who reported the post
+        reports = mycursor.fetchall() 
+        reports = [x[0] for x in reports] ## getting users
+        no_of_reports = len(reports) ##counting number of users who reported the post
+        print(no_of_reports) 
+        if no_of_reports>1 : ## if no of reports crosses a threshold value
+            mycursor.execute("delete from postss where id = {0}".format(post_id)) ## delete the post if no of reports crosses a threshold value
+            connection.commit() ## commit the changes to database 
+    if action == 'unreport': ## if a report on post is  taken back
+        current_user.unreport_post(post_id) ## call unreport_post in models to delete the post in post_report table
 
-    return redirect(request.referrer)
+    return redirect(request.referrer)## return to the same page
 
 
 
@@ -310,8 +302,9 @@ def addevent():
         return "success"
     return render_template('create_event.html', form=eform)
 
+# logout route
 @app.route("/logout", methods=['GET'])
 @login_required
 def logout():
-    logout_user()
-    return redirect(url_for('login'))
+    logout_user()   # inbuilt function to logout user
+    return redirect(url_for('login')) # redirect to login page
