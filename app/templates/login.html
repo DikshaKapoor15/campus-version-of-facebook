@@ -31,7 +31,8 @@
 			<label id="label-login" for="log-login-show">Register</label>
 			<input type="radio" name="active-log-panel" id="log-login-show">
 		</div>
-
+		
+<!-- 	    Login form asking for email id and password -->
 
 		<div class="white-panel">
 			<form method="POST" action="{{url_for('login')}}">
@@ -48,13 +49,17 @@
                 <li>{{error}}</li>
                 {% endfor %}
             </ul>
+<!-- 		On giving correct id and password ,on clicking submit ,you will be logged in. -->
 				<input type="submit" name = "action" value="Login">
+<!-- 		Link for reseting password in case the user forgets his password. -->
 				<a href="{{url_for('reset_password_request')}}">Forgot password?</a>
 			</div>
 		</form>
 			<form method="POST" action="{{url_for('login')}}">
 
 			<div class="register-show">
+				
+<!-- 	Register form asling the user to enter credentials like name , email id, year of joining, branch , department and a password of a specied format. -->
 				<h2>REGISTER</h2>
 							{{form.csrf_token}}
 
@@ -93,7 +98,7 @@
 		</form>
 	</div>
 	</div>
-
+<!-- javascript included as the login and register form are on same page and we can toggle bitween them. -->
     <script src="{{url_for('static', filename='javascript/script.js')}}"></script>
 
     
