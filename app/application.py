@@ -47,33 +47,34 @@ mail = Mail(app)
 def load_user(id):
     return Credentials.query.get(int(id))
 
-
+#home route
 @app.route('/', methods=['GET', 'POST'])
     
+#login and register route
 @app.route('/login', methods = ['GET','POST'])
 def login():
-    login_form = LoginForm()
-    reg_form = RegistrationForm()
+    login_form = LoginForm() # loading login form
+    reg_form = RegistrationForm()#loading register form
     print(request.method)
-    if request.method == 'POST':
-        if request.form["action"] == "Login":
-            if login_form.validate_on_submit():
-                user_object = Credentials.query.filter_by(mail_id = login_form.mail_id.data).first()
-                login_user(user_object)
+    if request.method == 'POST': # if form submitted
+        if request.form["action"] == "Login": # if login form submitted
+            if login_form.validate_on_submit():  # if conditions specified in forms.py are satisfied
+                user_object = Credentials.query.filter_by(mail_id = login_form.mail_id.data).first() # get details from Credentials table
+                login_user(user_object) #login the particular user
 
-                return redirect(url_for('home'))
-        elif request.form["action"] == "Register":
-            if reg_form.validate_on_submit():
-                mail_id = reg_form.mail_id.data
+                return redirect(url_for('home')) # redirect to home page after successful login
+        elif request.form["action"] == "Register": # if registration form submitted
+            if reg_form.validate_on_submit(): # if conditions specified in forms.py are satisfied
+                mail_id = reg_form.mail_id.data # get details from the form submitted
                 password = reg_form.password.data
-                cred = Credentials(mail_id=mail_id, password=generate_password_hash(password))
+                cred = Credentials(mail_id=mail_id, password=generate_password_hash(password)) # create object for Credentials
                 prof = newprofile(mail_id=mail_id, full_name=reg_form.full_name.data, year=reg_form.year.data,
-                               department=reg_form.department.data, degree=reg_form.degree.data)
-                db.session.add(cred)
-                db.session.add(prof)
+                               department=reg_form.department.data, degree=reg_form.degree.data) # create object for Profile
+                db.session.add(cred) # add the details to the Credentials table in database 
+                db.session.add(prof) # add the profile details to the Profile table in database
                 db.session.commit()
-                return redirect(url_for('login'))
-    return render_template("login.html", form1 = login_form, form = reg_form)
+                return redirect(url_for('login')) # redirect to login after successful registration
+    return render_template("login.html", form1 = login_form, form = reg_form) # if the method is post then return the login form
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
