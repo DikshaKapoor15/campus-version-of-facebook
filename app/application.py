@@ -159,11 +159,12 @@ def homeSearch():
     elif request.method == "POST":
         mycursor.execute("select id,tag from eventags")
         tvalue = mycursor.fetchall()
-        tvalue = [x[1] for x in tvalue]
-        print(tvalue[0])
+        tvalue = [(x[0], x[1]) for x in tvalue]
+        tvalue = dict(tvalue)
+        tvalue[0] = ''
         x = request.form['tag']
-        print(x)
-        if x in tvalue:
+        x = tvalue.get(int(x))
+        if x:
             mycursor.execute(
                 " select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from postss as po , newprofile as p"
                 " where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}')  order by date".format(
