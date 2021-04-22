@@ -102,17 +102,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   }
   
   /*-- end reset --*/
-  /* body {
-    background: orange;
-   
-    background: -webkit-linear-gradient(to top, #76b852, #8DC26F);
-    background: -moz-linear-gradient(to top, #76b852, #8DC26F);
-    background: -o-linear-gradient(to top, #76b852, #8DC26F);
-    background: linear-gradient(to top, #76b852, #8DC26F);
-    background-size: cover;
-    background-attachment: fixed;
-    font-family: 'Roboto', sans-serif;
-  } */
+  
   body {
     background: orange;
     /* fallback for old browsers */
