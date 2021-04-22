@@ -38,11 +38,11 @@
         </style>
         
          <script>
-             $(function() {
+             $(function() { // this function is to minimum date that can be selected to create an event
               $(document).ready(function () {
-                  var date = new Date().toISOString().slice(0,10);
-                   $('#sdate').attr('min', date);
-                   $('#edate').attr('min', date);
+                  var date = new Date().toISOString().slice(0,10); // extract date from date and time output
+                   $('#sdate').attr('min', date);      // disabling the days that have passed
+                   $('#edate').attr('min', date);     // disabling the days that have passed     
               });
            });
         </script>
