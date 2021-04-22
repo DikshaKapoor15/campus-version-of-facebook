@@ -82,13 +82,6 @@ class PostReport(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('credentials.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('postss.id'))
 
-class Profile(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    mail_id = db.Column(db.String(50), unique = True, nullable = False)
-    full_name = db.Column(db.String(), nullable= False)
-    year = db.Column(db.Integer, nullable = False)
-    department = db.Column(db.String(), nullable= False)
-    degree = db.Column(db.String(), nullable= False)
 
 class newprofile(db.Model):
     id = db.Column(db.Integer, primary_key = True)
