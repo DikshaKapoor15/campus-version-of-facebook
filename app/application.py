@@ -1,14 +1,14 @@
-from app import app
-from app.forms import *
-from app.models import *
-from flask import render_template, url_for, redirect,request, jsonify
-from flask_login import LoginManager, login_user, current_user, login_required, logout_user
-from sqlalchemy import create_engine
-from flask_mail import Mail, Message  ##to be checked
-from app.email import *
-from itsdangerous import URLSafeTimedSerializer ##to be checked
-from werkzeug.security import generate_password_hash,check_password_hash
-import base64
+from app import app ##for initiating the app
+from app.forms import * ## to get all the forms and validators in them
+from app.models import * ## all the tables present in database 
+from flask import render_template, url_for, redirect,request, jsonify ## components of flask to connect to frontend
+from flask_login import LoginManager, login_user, current_user, login_required, logout_user ## modules for logging in a user
+from sqlalchemy import create_engine ## connecting to database
+from flask_mail import Mail, Message  ## to send mails in forgot password
+from app.email import * ## to send mails in forgot password
+from itsdangerous import URLSafeTimedSerializer 
+from werkzeug.security import generate_password_hash,check_password_hash ## to hash password and validating entered password with the hash of password
+import base64 ## encode and decode images
 
 
 engine = create_engine('postgres://odebgxxluzxqto:02911cc1fe5c97f0916d6a05760b41704668ab6013b712674a3b677f127ac1db@ec2-54-205-183-19.compute-1.amazonaws.com:5432/db0511lmef59sk')
