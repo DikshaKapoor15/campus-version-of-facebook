@@ -267,15 +267,15 @@ def report_action(post_id, action):
 
 @app.route('/calendar', methods=["GET", "POST"])
 def calendar():
-    mycursor.execute("select * from events order by id")
+    mycursor.execute("select * from events order by id") # selecting all the event data form database
     data = mycursor.fetchall()
-    timedate1 = [datetime.datetime.combine(x[5], x[6]) for x in data]
-    timedate2 = [datetime.datetime.combine(x[7], x[8]) for x in data]
+    timedate1 = [datetime.datetime.combine(x[5], x[6]) for x in data] # combining the start date and time of every event
+    timedate2 = [datetime.datetime.combine(x[7], x[8]) for x in data] # combining the end date and time of every event
     data = [list(x) for x in data]
 
     for i in range(len(data)):
-        data[i][5] = timedate1[i]
-        data[i][6] = timedate2[i]
+        data[i][5] = timedate1[i] #replacing the value with combined start date and time event.
+        data[i][6] = timedate2[i] #replacing the value with  end date and time event.
 
     return render_template("calendar1.html", data=data)
 
