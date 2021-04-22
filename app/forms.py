@@ -52,12 +52,12 @@ class PosttForm(FlaskForm):
     tag1 = SelectField("tag1", coerce=int, validators=[InputRequired()],default=None) # one tag is required field
     tag2 = SelectField("tag2", coerce=int,default=None) # tag is optional
     tag3 = SelectField("tag3", coerce=int,default=None) # tag is optional
-    date = DateField("date",format='%Y-%m-%d') # date
+    date = DateField("date",format='%Y-%m-%d') # posted date of the post
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.date.data:
-            self.date.data = datetime.date.today() #
+            self.date.data = datetime.date.today() #the date need not be entered in the it will automatically takes today's date
 
 
 class ResetPasswordRequestForm(FlaskForm):
@@ -70,16 +70,20 @@ class ResetPasswordForm(FlaskForm):
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Request Password Reset')
 
+#form is to search tag in the home page    
 class HomeForm(FlaskForm):
-    tag_search = StringField('tag_search')
-
+    #the choices are sent dynamic way (from database system ) in application.py
+    tag_search = SelectField('enter the tag : ',coerce=int,validators=[InputRequired()]) #tags can be selected only from the ones are present 
+    
+#form is to create event form 
 class EventForm(FlaskForm):
-    title = StringField("Title",validators=[InputRequired()])
-    description = StringField("Description",validators=[InputRequired()])
-    venue      = StringField("Venue",validators=[InputRequired()])
-    sdate     = DateField("Start Date",format='%Y-%m-%d',validators=[InputRequired()])
-    stime     = TimeField("Start Time", format="%H:%M",validators=[InputRequired()])
-    edate = DateField("End Date", format='%Y-%m-%d',validators=[InputRequired()])
-    etime = TimeField("End Time", format="%H:%M",validators=[InputRequired()])
-    tag   = StringField("Tag",validators=[InputRequired()])
+    title = StringField("Title",validators=[InputRequired()]) # title of the event is required field
+    description = StringField("Description",validators=[InputRequired()])# description of the event(contains details of the event can have links to registration form too) is required field
+    venue      = StringField("Venue",validators=[InputRequired()])# venue(location/platform) of the event is required field
+    sdate     = DateField("Start Date",format='%Y-%m-%d',validators=[InputRequired()])# start date of the event is required field
+    stime     = TimeField("Start Time", format="%H:%M",validators=[InputRequired()])# time when event starts is required field
+    edate = DateField("End Date", format='%Y-%m-%d',validators=[InputRequired()])# end date of the event is required field
+    etime = TimeField("End Time", format="%H:%M",validators=[InputRequired()])# time when event ends is required field
+    tag   = StringField("Tag",validators=[InputRequired()]) # tag of the event(to tag event in the posts) is required field
     color = SelectField("Colour",choices=[('#4fbd0a',' green'),('#082b96 ','blue'),('#4a0896 ','violet'),('#96087e ','purple'),('#960833',' pink'),('#960808 ','maroon'),('#bd5a0a','brown'),('#089669 ','navygreen'),('#086e96',' navyblue')])
+                  #color of event to be displayed in calendar
