@@ -88,3 +88,29 @@ class EventForm(FlaskForm):
     tag   = StringField("Tag",validators=[InputRequired()]) # tag of the event(to tag event in the posts) is required field
     color = SelectField("Colour",choices=[('#4fbd0a',' green'),('#082b96 ','blue'),('#4a0896 ','violet'),('#96087e ','purple'),('#960833',' pink'),('#960808 ','maroon'),('#bd5a0a','brown'),('#089669 ','navygreen'),('#086e96',' navyblue')])
                   #color of event to be displayed in calendar
+
+
+
+class UpdateYourAccountForm(FlaskForm):
+    mail_id = StringField('mail_id', validators=[InputRequired(message = "Email required required"), Email("This field requires a valid email address")])  #validators=[invalid_mail,InputRequired(message="Mail already exists")], check this
+    full_name = StringField('full_name')
+    year = IntegerField('year')
+    # department = StringField('department')
+    # degree = StringField('degree')
+    department = SelectField(label='department', choices=[('CSE', 'CSE'), ('Electrical', 'Electrical'),
+                                                          ('Maths and Computing', 'Maths and Computing'),
+                                                          ('Mechanical', 'Mechanical'), ('Civil', 'Civil'),
+                                                          ('Chemical', 'Chemical'), ('Metallurgy', 'Metallurgy')])
+    degree = SelectField(label='degree',
+                         choices=[('B.Tech', 'B.Tech'), ('M.Tech', 'M.Tech'), ('M.Sc', 'M.Sc'), ('PhD', 'PhD')])
+    # image_file = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
+    # submit = SubmitField('Update')
+
+
+    #####____________________THese checks need to be reevaluated__________________________#####
+    # def validate_email(self, mail_id):
+    #     if mail_id.data != mail_id.email:
+    #         user = Profile.query.filter_by(mail_id=mail_id.data).first()
+    #         if user:
+    #             raise ValidationError('That email is taken. Please choose a different one.')
+
