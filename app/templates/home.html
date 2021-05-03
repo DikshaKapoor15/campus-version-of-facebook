@@ -79,6 +79,11 @@ Below the four cards , all posts are displayed with  their details.
 
 
 </script>
+ <style type="text/css">
+       a {
+          text-decoration:none;
+       }
+    </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -92,7 +97,8 @@ Below the four cards , all posts are displayed with  their details.
 
                                  {{form.tag_search(class="form-control",type="text",placeholder="Search for..." , id = "tag_search")}}
                     <div class="input-group-append">
-                        <input type="submit"  id ="btn" value="Search">
+        <!--                <input type="submit"  id ="btn" value="Search">-->
+        <button type="submit" id ="btn"><i class="fa fa-search"></i></button>
                     </div>
                 </div>
             </form>
