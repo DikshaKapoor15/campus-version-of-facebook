@@ -83,6 +83,11 @@
             </ul>
 
 				{{form.year(placeholder = 'Joining year', type='number')}}
+                                <ul>
+                {% for error in form.year.errors %}
+                <li>{{error}}</li>
+                {% endfor %}
+            </ul>
 
 				{{form.department(placeholder = 'Department', type='text')}}
 
