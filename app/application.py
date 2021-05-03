@@ -10,7 +10,7 @@ from itsdangerous import URLSafeTimedSerializer
 from werkzeug.security import generate_password_hash,check_password_hash ## to hash password and validating entered password with the hash of password
 import base64 ## encode and decode images
 from functools import cmp_to_key
-# import spacy
+import spacy
 
 import os
 import secrets
@@ -142,6 +142,7 @@ def reset_password(token):
 
 #after successful login it is redirected to home route
 @app.route('/home',methods=["POST","GET"])
+@login_required
 def home():
     mycursor.execute("select id,tag from eventags order by count desc") # fetching the event tags data order b count in descending order
     trending1 = mycursor.fetchall()
@@ -156,55 +157,56 @@ def home():
     upcoming = mycursor.fetchall()
     if len(upcoming)>4:
         upcoming=upcoming[:4]
-#     mycursor.execute("select post_id from post_like where user_id = '{0}'".format(str(current_user.id)))
-#     posts = mycursor.fetchall()
-#     all_fav_tags = []
-#     print(posts)
-#     for i in posts:
-#         print(i[0])
-#         mycursor.execute("select tag1,tag2,tag3 from post where id = {0}".format(i[0]))
-#         tags = mycursor.fetchall()
-#         print(tags)
-#         if tags:
-#             for x in tags[0]:
-#                 if x:
-#                     all_fav_tags.append(x)
+    mycursor.execute("select post_id from post_like where user_id = '{0}'".format(str(current_user.id)))
+    posts = mycursor.fetchall()
+    all_fav_tags = []
+    print(posts)
+    for i in posts:
+        print(i[0])
+        mycursor.execute("select tag1,tag2,tag3 from post where id = {0}".format(i[0]))
+        tags = mycursor.fetchall()
+        print(tags)
+        if tags:
+            for x in tags[0]:
+                if x:
+                    all_fav_tags.append(x)
 
-#     print(all_fav_tags)
-#     liked = max(set(all_fav_tags), key=all_fav_tags.count)
-#     print(liked)
-#     mycursor.execute("select tag from eventags")
-#     all_tags = mycursor.fetchall()
-#     similarity = []
-#     all_tags = list(all_tags)
+    print(all_fav_tags)
+    liked = max(set(all_fav_tags), key=all_fav_tags.count)
+    print(liked)
+    mycursor.execute("select tag from eventags")
+    all_tags = mycursor.fetchall()
+    similarity = []
+    all_tags = list(all_tags)
 
-#     def similarity_cmp(a, b):
-#         a = a[0]
-#         b = b[0]
-#         print(type(liked))
-#         if (wordsim(liked, a) < wordsim(liked, b)):
-#             return -1
-#         else:
-#             return 1
+    def similarity_cmp(a, b):
+        a = a[0]
+        b = b[0]
+        print(type(liked))
+        if (wordsim(liked, a) < wordsim(liked, b)):
+            return -1
+        else:
+            return 1
 
-#     similarity_cmp_key = cmp_to_key(similarity_cmp)
-#     all_tags.sort(key=similarity_cmp_key)
-#     recommended_tags = all_tags[0:4]
-#     print(recommended_tags)
-#     recommended_events = []
-#     for tag in recommended_tags:
-#         mycursor.execute("select * from events where tag = '{0}'".format(str(tag[0])))
-#         recommended_events += mycursor.fetchall()
+    similarity_cmp_key = cmp_to_key(similarity_cmp)
+    all_tags.sort(key=similarity_cmp_key)
+    recommended_tags = all_tags[0:4]
+    print(recommended_tags)
+    recommended_events = []
+    for tag in recommended_tags:
+        mycursor.execute("select * from events where tag = '{0}'".format(str(tag[0])))
+        recommended_events += mycursor.fetchall()
 
-#     #print(recommended_events)
-#     if len(recommended_events)>4:
-#         recommended_events=recommended_events[:4]
+    #print(recommended_events)
+    if len(recommended_events)>4:
+        recommended_events=recommended_events[:4]
 
     return render_template('home.html', form=hform,trending=trending,upcoming=upcoming)   # rendering home page passing form and trending events data
 
 
 # it is routed to homeSearch by ajax present in Home.html
 @app.route('/homeSearch',methods=["POST","GET"])
+@login_required
 def homeSearch():
     if request.method == "GET":            # method type is GET
         mycursor.execute(
@@ -263,6 +265,7 @@ def homeSearch():
 
 #route to create post and routed to this page on clicking create post button
 @app.route('/create_post', methods = ['GET','POST'])
+@login_required
 def create_post():
     ptform = PosttForm()              # form to create post
     mycursor.execute("select id,tag from eventags") # fetching the event tags data order b count in descending order
@@ -337,6 +340,7 @@ def report_action(post_id, action):
 
 
 @app.route('/calendar', methods=["GET", "POST"])
+@login_required
 def calendar():
     mycursor.execute("select * from events order by id") # selecting all the event data form database
     data = mycursor.fetchall()
@@ -352,6 +356,7 @@ def calendar():
 
 #route to create/add event and routed to this page on clicking create/add event button
 @app.route("/addevent", methods=['GET', 'POST'])
+@login_required
 def addevent():
     eform = EventForm()                                        #form to create event
     mycursor.execute("select tag from eventags")            #fetching event tags data 
@@ -398,6 +403,7 @@ def save_picture(form_picture):
     return picture_fn
 
 @app.route("/viewProfile/<string:id>", methods=["GET","POST"])
+@login_required
 def viewProfile(id):
     mycursor.execute("select * from newprofile where id='{0}'".format(id))
     pdata=mycursor.fetchall()
@@ -428,7 +434,7 @@ def viewProfile(id):
 
 
 @app.route('/updateAccount', methods=['GET', 'POST'])
-# @login_required    to be checked
+@login_required  #  to be checked
 def updateAccount():
     form = UpdateYourAccountForm()
     if form.validate_on_submit():
