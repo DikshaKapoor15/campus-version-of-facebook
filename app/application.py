@@ -9,7 +9,6 @@ from app.e import * ## to send mails in forgot password
 from itsdangerous import URLSafeTimedSerializer 
 from werkzeug.security import generate_password_hash,check_password_hash ## to hash password and validating entered password with the hash of password
 import base64 ## encode and decode images
-from statistics import mode
 from functools import cmp_to_key
 # import spacy
 
