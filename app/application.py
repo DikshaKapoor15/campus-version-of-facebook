@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash,check_password_hash ## to h
 import base64 ## encode and decode images
 from functools import cmp_to_key
 import spacy
-
+import en_core_web_sm
 import os
 import secrets
 from PIL import Image
@@ -49,7 +49,7 @@ app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
 
 def wordsim(w1,w2):
-    nlp = spacy.load('en_core_web_sm')
+    nlp = en_core_web_sm.load()
    # print("Enter two space-separated words")
    # words = input()
     words = w1 + w2
