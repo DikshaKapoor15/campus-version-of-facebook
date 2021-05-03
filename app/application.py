@@ -78,6 +78,7 @@ def login():
                 db.session.add(cred) # add the details to the Credentials table in database 
                 db.session.add(prof) # add the profile details to the Profile table in database
                 db.session.commit()
+                flash('You were successfully registered')
                 return redirect(url_for('login')) # redirect to login after successful registration
     return render_template("login.html", form1 = login_form, form = reg_form) # if the method is post then return the login form
 
