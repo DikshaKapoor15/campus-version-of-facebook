@@ -44,10 +44,14 @@ The submit button on clicking changes the colour.
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="{{url_for('updateAccount')}}">Profile</a>
+                        <a class="dropdown-item" href="{{url_for('updateAccount')}}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                            Profile</a>
                         
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{url_for('logout')}}">Logout</a>
+                        <a class="dropdown-item" href="{{url_for('logout')}}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-logout"></i></div> 
+                            Logout</a>
                     </div>
                 </li>
             </ul>
