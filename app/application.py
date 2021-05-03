@@ -69,8 +69,6 @@ def load_user(id):
 
 #home route
 @app.route('/', methods=['GET', 'POST'])
-    
-#login and register route
 @app.route('/login', methods = ['GET','POST'])
 def login():
     login_form = LoginForm() # loading login form
