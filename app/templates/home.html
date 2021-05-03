@@ -63,6 +63,14 @@ Below the four cards , all posts are displayed with  their details.
              });
           e.preventDefault();
       }) ;
+            
+               $('#tag_search').select2({  // init Select2 on form's name field
+                        placeholder: '{{ form.tag_search.label.text }}',
+                        allowClear: true,
+                        theme: "classic",
+                         "width": "style"
+                    });
+
       });
 
 
