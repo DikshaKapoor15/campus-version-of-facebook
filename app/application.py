@@ -137,8 +137,13 @@ def home():
     hform = HomeForm()                                # form for searching tags
     value = [(x[0], x[1]) for x in trending1]          #list of tuples with id,tag 
     value = sorted(value)                             #sorted according to id's
-    hform.tag_search.choices = value                  #this list is passed to HomeForm tag search for choices 
-    return render_template('home.html', form=hform,trending=trending)   # rendering home page passing form and trending events data
+    hform.tag_search.choices = value[1:]                  #this list is passed to HomeForm tag search for choices
+    date = datetime.datetime.today()
+    mycursor.execute("select * from events where sdate>='{d}' order by sdate " .format(d=date))
+    upcoming = mycursor.fetchall()
+   # print(upcoming)
+    return render_template('home.html', form=hform,trending=trending,upcoming=upcoming)   # rendering home page passing form and trending events data
+
 
 # it is routed to homeSearch by ajax present in Home.html
 @app.route('/homeSearch',methods=["POST","GET"])
