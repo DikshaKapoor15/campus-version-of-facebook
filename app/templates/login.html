@@ -38,6 +38,15 @@
 			<form method="POST" action="{{url_for('login')}}">
 			<div class="login-show">
 				<h2>LOGIN</h2>
+				{% with messages = get_flashed_messages() %}
+  					{% if messages %}
+    						<ul class=flashes>
+   					 		{% for message in messages %}
+      								<li>{{ message }}</li>
+    							{% endfor %}
+    						</ul>
+  					{% endif %}
+				{% endwith %}
 				{{form1.csrf_token}}
 
 

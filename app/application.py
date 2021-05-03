@@ -78,6 +78,7 @@ def login():
                 db.session.add(cred) # add the details to the Credentials table in database 
                 db.session.add(prof) # add the profile details to the Profile table in database
                 db.session.commit()
+                flash('You were successfully registered')
                 return redirect(url_for('login')) # redirect to login after successful registration
     return render_template("login.html", form1 = login_form, form = reg_form) # if the method is post then return the login form
 
@@ -136,8 +137,13 @@ def home():
     hform = HomeForm()                                # form for searching tags
     value = [(x[0], x[1]) for x in trending1]          #list of tuples with id,tag 
     value = sorted(value)                             #sorted according to id's
-    hform.tag_search.choices = value                  #this list is passed to HomeForm tag search for choices 
-    return render_template('home.html', form=hform,trending=trending)   # rendering home page passing form and trending events data
+    hform.tag_search.choices = value[1:]                  #this list is passed to HomeForm tag search for choices
+    date = datetime.datetime.today()
+    mycursor.execute("select * from events where sdate>='{d}' order by sdate " .format(d=date))
+    upcoming = mycursor.fetchall()
+   # print(upcoming)
+    return render_template('home.html', form=hform,trending=trending,upcoming=upcoming)   # rendering home page passing form and trending events data
+
 
 # it is routed to homeSearch by ajax present in Home.html
 @app.route('/homeSearch',methods=["POST","GET"])
@@ -328,6 +334,35 @@ def save_picture(form_picture):
     i.thumbnail(output_size)
     i.save(picture_path)
     return picture_fn
+
+@app.route("/viewProfile/<string:id>", methods=["GET","POST"])
+def viewProfile(id):
+    mycursor.execute("select * from newprofile where id='{0}'".format(id))
+    pdata=mycursor.fetchall()
+    pdata=list(pdata[0])
+    user = pdata[1]
+    pdata[1]=str(pdata[1]).strip("@iitrpr.ac.in")
+    mycursor.execute("select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id,p.id from post as po , newprofile as p where p.mail_id=po.mail_id and po.mail_id='{mailid}' order by date"
+                     .format(mailid=user))
+    data1 = mycursor.fetchall()  # date,description,tags username of the person posted of all posts with images are fetched from database
+    mycursor.execute(
+        "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id,p.id from postss as po , newprofile as p where p.mail_id=po.mail_id and po.mail_id='{mailid}' order by date"
+            .format(mailid=user) )
+    data = mycursor.fetchall()  # date,description,tags username of the person posted of all posts with images are fetched from database
+    data = [list(x) for x in data]  # tuples are converted into lists
+    imgs = [base64.b64encode(x[4]) for x in
+            data]  # binary files are encoded(converted) to text form(readable) using base64 library
+    imgs = [x.decode('utf-8') for x in imgs]  # files are decoded to form can be displayed in html using base64
+
+    for i in range(len(data)):
+        data[i][4] = imgs[i]  # these images are replaced with the before ones
+    data.extend(data1)  # data related to posts with image and without image are merged into one list
+    data.sort(key=lambda x: x[1], reverse=True)  # data is sorted according to the posted date
+
+    #return jsonify({"htmlresponse": render_template('response.html',
+      #                                              data=data)})  # this data are sent to response.html using htmlresponse in jsonify
+
+    return render_template("viewProfile.html",pdata=pdata,data=data)
 
 
 @app.route('/updateAccount', methods=['GET', 'POST'])

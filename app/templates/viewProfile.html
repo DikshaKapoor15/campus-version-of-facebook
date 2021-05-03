@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+<style>
+    .topnav {
+  background-color: #ffffff;
+    padding-bottom: 4px;
+
+}
+
+.topnav a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  width: 286px;
+}
+
+.topnav a:hover {
+  background-color: #1464F4;
+  color: white;
+    text-decoration: none;
+}
+
+.topnav a:not(:last-child) {
+  border-right: 1px solid #ddd;
+
+}
+
+
+.topnav-right a:hover {
+  background-color: #ff0000;
+  color: white;
+  text-decoration: none;
+}
+
+.topnav-right {
+  float: right;
+}
+    </style>
+    <link href="{{ url_for('static',filename='styles/home_style.css') }}" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+
+</head>
+<body>
+<div>
+         <h2>{{pdata[2]}}</h2>
+         <p>Year : {{pdata[3]}}</p>
+         <p>Department : {{pdata[4]}}</p>
+         <p>Degree : {{pdata[5]}}</p>
+        <p>ID : {{pdata[1]}}</p>
+</div>
+<div>
+    {% if data %}
+      {% for d in data%}
+                            <div class="card" style="margin-left: 200px;" >
+                                <!-- <div class="post1"> -->
+                                    <img src="{{url_for('static', filename = 'assets/image1.jpeg')}}" alt="image is here"
+                                        style=" border-radius: 50%; height: 60px ; width: 60px; padding:10px 10px ;"/><br>
+                                {% if d[4] %}
+                                    <img src="data:image/jpeg;base64,{{d[4]}}" alt="image is here"
+                                        height="400" width="575" style="padding-top: 10px;"/><br><br>
+                                {% endif %}
+
+
+                                    <div id="post2text"  class="post1">
+                                        <p3><a href="viewProfile/{{d[8]}} "  >{{d[0]}}</a> </p3>
+                                        <p2>posted on  </p2>
+                                        <p1>{{d[1]}}</p1>
+
+                                    </div>
+                                    <div class="container">
+                                        <h4><b>{{d[2]}} </b></h4>
+                                        <p>{{d[3]}} {% if d[5] %} {{d[5]}} {% endif %} {% if d[6] %} {{d[6]}} {% endif %}</p>
+                                      </div>
+                                <div class="topnav">
+                                {% if current_user.has_liked_post(d[7]) %}
+                                <a href="{{ url_for('like_action', post_id=d[7], action='unlike') }}">Dislike</a>
+                              {% else %}
+                                <a href="{{ url_for('like_action', post_id=d[7], action='like') }}">Like</a>
+                              {% endif %}
+                                <div class="topnav-right">
+                               {% if current_user.has_reported_post(d[7]) %}
+                                <a href="{{ url_for('report_action', post_id=d[7], action='unreport') }}">Take back report</a>
+                              {% else %}
+                                <a href="{{ url_for('report_action', post_id=d[7], action='report') }}">Report</a>
+                              {% endif %}
+                                </div>
+
+                                </div>
+                                <!-- </div> -->
+                            </div>
+                            <br>
+                            {% endfor %}
+{% else %}
+ <p> No posts are available <p>
+
+{% endif %}
+
+
+</div>
+</body>
+</html>
