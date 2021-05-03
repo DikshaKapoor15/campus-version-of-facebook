@@ -25,6 +25,30 @@ The submit button on clicking changes the colour.
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="{{ url_for('static',filename='styles/post_create.css') }}">
 
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+        <script>
+        $(document).ready(function() {
+
+             let textarea = document.querySelector(".resize-ta");
+                    textarea.addEventListener("keyup", () => {
+                      textarea.style.height = calcHeight(textarea.value) + "px";
+                    });
+
+
+         });
+</script>
+         <style>
+            .textarea {
+                      display: block;
+                      width: 100%;
+                      overflow: hidden;
+                      resize: both;
+                      min-height: 40px;
+                      line-height: 20px;
+                    }
+        </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -104,7 +128,7 @@ The submit button on clicking changes the colour.
                                       </br>
                                       </br>
                                           {{form.post_description.label}}
-                                          {{form.post_description}}
+                                          {{form.post_description(class="textarea resize-ta", role="textbox")}}
                                       </br>
                                           </br>
                                           {{form.tag1.label}}
