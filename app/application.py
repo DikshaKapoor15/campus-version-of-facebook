@@ -5,11 +5,13 @@ from flask import render_template, url_for, redirect,request, jsonify ## compone
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user ## modules for logging in a user
 from sqlalchemy import create_engine ## connecting to database
 from flask_mail import Mail, Message  ## to send mails in forgot password
-from app.email import * ## to send mails in forgot password
+from app.e import * ## to send mails in forgot password
 from itsdangerous import URLSafeTimedSerializer 
 from werkzeug.security import generate_password_hash,check_password_hash ## to hash password and validating entered password with the hash of password
 import base64 ## encode and decode images
-
+from statistics import mode
+from functools import cmp_to_key
+import spacy
 
 import os
 import secrets
@@ -47,6 +49,20 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
 
+def wordsim(w1,w2):
+    nlp = spacy.load('en_core_web_sm')
+   # print("Enter two space-separated words")
+   # words = input()
+    words = w1 + w2
+    tokens = nlp(words)
+
+    for token in tokens:
+        print(token.text, token.has_vector, token.vector_norm, token.is_oov)
+
+    token1, token2 = tokens[0], tokens[1]
+
+    print("Similarity:", token1.similarity(token2))
+    return  token1.similarity(token2)
 #function for loading the user if logged in
 @login.user_loader
 def load_user(id):
@@ -141,7 +157,52 @@ def home():
     date = datetime.datetime.today()
     mycursor.execute("select * from events where sdate>='{d}' order by sdate " .format(d=date))
     upcoming = mycursor.fetchall()
-   # print(upcoming)
+    if len(upcoming)>4:
+        upcoming=upcoming[:4]
+    mycursor.execute("select post_id from post_like where user_id = '{0}'".format(str(current_user.id)))
+    posts = mycursor.fetchall()
+    all_fav_tags = []
+    print(posts)
+    for i in posts:
+        print(i[0])
+        mycursor.execute("select tag1,tag2,tag3 from post where id = {0}".format(i[0]))
+        tags = mycursor.fetchall()
+        print(tags)
+        if tags:
+            for x in tags[0]:
+                if x:
+                    all_fav_tags.append(x)
+
+    print(all_fav_tags)
+    liked = max(set(all_fav_tags), key=all_fav_tags.count)
+    print(liked)
+    mycursor.execute("select tag from eventags")
+    all_tags = mycursor.fetchall()
+    similarity = []
+    all_tags = list(all_tags)
+
+    def similarity_cmp(a, b):
+        a = a[0]
+        b = b[0]
+        print(type(liked))
+        if (wordsim(liked, a) < wordsim(liked, b)):
+            return -1
+        else:
+            return 1
+
+    similarity_cmp_key = cmp_to_key(similarity_cmp)
+    all_tags.sort(key=similarity_cmp_key)
+    recommended_tags = all_tags[0:4]
+    print(recommended_tags)
+    recommended_events = []
+    for tag in recommended_tags:
+        mycursor.execute("select * from events where tag = '{0}'".format(str(tag[0])))
+        recommended_events += mycursor.fetchall()
+
+    #print(recommended_events)
+    if len(recommended_events)>4:
+        recommended_events=recommended_events[:4]
+
     return render_template('home.html', form=hform,trending=trending,upcoming=upcoming)   # rendering home page passing form and trending events data
 
 
@@ -150,10 +211,10 @@ def home():
 def homeSearch():
     if request.method == "GET":            # method type is GET
         mycursor.execute(
-            "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from post as po , newprofile as p where p.mail_id=po.mail_id order by date")
+            "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id,p.id from post as po , newprofile as p where p.mail_id=po.mail_id order by date")
         data1 = mycursor.fetchall()         # date,description,tags username of the person posted of all posts with images are fetched from database
         mycursor.execute(
-            "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from postss as po , newprofile as p where p.mail_id=po.mail_id order by date")
+            "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id,p.id from postss as po , newprofile as p where p.mail_id=po.mail_id order by date")
         data = mycursor.fetchall()          # date,description,tags username of the person posted of all posts with images are fetched from database
         data = [list(x) for x in data]      # tuples are converted into lists 
         imgs = [base64.b64encode(x[4]) for x in data]    # binary files are encoded(converted) to text form(readable) using base64 library
@@ -176,12 +237,12 @@ def homeSearch():
         x = tvalue.get(int(x))         # using dictionary getting the tag 
         if x:                          # if tag is not a empty string 
             mycursor.execute(
-                " select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from postss as po , newprofile as p"
+                " select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id,p.id from postss as po , newprofile as p"
                 " where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}')  order by date".format(
                     str(x)))     # date,description,tags username of the person posted of the posts that related to tag searched with images are fetched from database
             data = mycursor.fetchall()
             mycursor.execute(
-                " select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id from post as po , newprofile as p"
+                " select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id,p.id from post as po , newprofile as p"
                 " where (p.mail_id=po.mail_id) and (po.tag1='{0}' or po.tag2='{0}' or po.tag3='{0}')  order by date".format(
                     str(x)))   # date,description,tags username of the person posted of the posts that related to tag searched without images are fetched from database
             data1 = mycursor.fetchall()
@@ -207,7 +268,7 @@ def create_post():
     value = mycursor.fetchall()
     value = [(x[0], x[1]) for x in value]            #list of tuples with id,tag 
     value = sorted(value)                            #sorted according to id's
-    ptform.tag1.choices = value                       #this list is passed to postForm tag1 choices for selction  
+    ptform.tag1.choices = value[1:]                       #this list is passed to postForm tag1 choices for selction  
     ptform.tag2.choices = value                       #this list is passed to postForm tag2 choices for selction
     ptform.tag3.choices = value                        #this list is passed to postForm tag3 choices for selction  
     value = dict(value)                              #converted it into dictionary
@@ -409,8 +470,4 @@ def updateAccount():
     return render_template('updateProfile.html', title='Account',form=form)
 
      ##image_file to be passed yet
-
-
-
-
 
