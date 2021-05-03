@@ -155,7 +155,7 @@ def home():
     value = sorted(value)                             #sorted according to id's
     hform.tag_search.choices = value[1:]                  #this list is passed to HomeForm tag search for choices
     date = datetime.datetime.today()
-    mycursor.execute("select * from events where sdate>='{d}' order by sdate " .format(d=date))
+    mycursor.execute("select * from events where sdate>='{d}' order by sdate " .format(d=date)) # upcomimg events are taken using this qu
     upcoming = mycursor.fetchall()
     if len(upcoming)>4:
         upcoming=upcoming[:4]
