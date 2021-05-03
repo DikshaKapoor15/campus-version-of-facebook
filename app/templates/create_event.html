@@ -49,9 +49,24 @@ with its title pertaining to the event's date -->
                   var date = new Date().toISOString().slice(0,10); // extract date from date and time output
                    $('#sdate').attr('min', date);      // disabling the days that have passed
                    $('#edate').attr('min', date);     // disabling the days that have passed     
+ 
+                  let textarea = document.querySelector(".resize-ta");
+                    textarea.addEventListener("keyup", () => {
+                      textarea.style.height = calcHeight(textarea.value) + "px";
+                    }); 
               });
            });
         </script>
+        <style>
+            .textarea {
+                      display: block;
+                      width: 100%;
+                      overflow: hidden;
+                      resize: both;
+                      min-height: 40px;
+                      line-height: 20px;		         
+		      }
+	    </style>
         
 
     </head>
@@ -155,7 +170,7 @@ with its title pertaining to the event's date -->
                                         <div class="form-group">
 <!--                                            <input type="text" class="form-control" placeholder="Last Name *" value="" />-->
                                                       {{form.description.label}}
-                                                      {{form.description}}
+                                                      {{form.description(class="textarea resize-ta", role="textbox")}}
                                         </div>
                                         <div class="form-group">
 <!--                                            <input type="password" class="form-control" placeholder="Password *" value="" />-->
