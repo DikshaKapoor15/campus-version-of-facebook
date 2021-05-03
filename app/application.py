@@ -216,13 +216,15 @@ def homeSearch():
         mycursor.execute(
             "select distinct  p.full_name, po.date,po.post_description,po.tag1,po.post_img,po.tag2,po.tag3,po.id,p.id from postss as po , newprofile as p where p.mail_id=po.mail_id order by date")
         data = mycursor.fetchall()          # date,description,tags username of the person posted of all posts with images are fetched from database
-        data = [list(x) for x in data]      # tuples are converted into lists 
+        data = [list(x) for x in data]      # tuples are converted into lists
+        #print(data,data1,sep="\n")
         imgs = [base64.b64encode(x[4]) for x in data]    # binary files are encoded(converted) to text form(readable) using base64 library
         imgs = [x.decode('utf-8') for x in imgs]        # files are decoded to form can be displayed in html using base64      
 
         for i in range(len(data)):
             data[i][4] = imgs[i]            # these images are replaced with the before ones
         data.extend(data1)                  # data related to posts with image and without image are merged into one list
+
         data.sort(key=lambda x: x[1], reverse=True)        # data is sorted according to the posted date
 
         return jsonify({"htmlresponse": render_template('response.html', data=data)}) # this data are sent to response.html using htmlresponse in jsonify
@@ -234,6 +236,7 @@ def homeSearch():
         tvalue = dict(tvalue)          # converted them into dictionary
         tvalue[0] = ''                 # no tag is selected gives 0 that is converted to empty string
         x = request.form['tag']        # requesting the value of tag searched
+       # print(x)
         x = tvalue.get(int(x))         # using dictionary getting the tag 
         if x:                          # if tag is not a empty string 
             mycursor.execute(
@@ -259,6 +262,7 @@ def homeSearch():
             return jsonify({"error": "Select a tag "})     # this is returned when string is empty
 
     return jsonify({"error": "error"})
+
 
 #route to create post and routed to this page on clicking create post button
 @app.route('/create_post', methods = ['GET','POST'])
